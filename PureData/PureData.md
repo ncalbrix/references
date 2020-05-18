@@ -56,4 +56,3 @@ In order to explicitly set the order in which the bangs will be sent, use the **
 
 Once *cold inlets* receive a value, they store this value and use it every time the corresponding object is triggered, until they receive a new value.
 
-Test insert
