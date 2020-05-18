@@ -55,3 +55,5 @@ The *hot inlet* of an object (the leftmost *inlet*) will always *trigger* this o
 In order to explicitly set the order in which the bangs will be sent, use the **trigger** object : an object with name `t`. Upon receiving a bang, this object will send out values or bangs in order from right to left. This can be used to **ensure that values are propagated in the right order**.
 
 Once *cold inlets* receive a value, they store this value and use it every time the corresponding object is triggered, until they receive a new value.
+
+Test insert
