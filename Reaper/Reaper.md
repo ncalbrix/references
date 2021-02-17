@@ -17,6 +17,19 @@ In order to move a time selection, you need to hold Shift, click somewhere empty
 
 
 
+## Project setup
+
+*Keywords* : paths, options, default, media copy, media import
+
+### Writing all media files into project media subdirectory
+Open the project settings (Alt + Enter), an go to the *Media* tab. There, input a subdirectory name in the *Path to save media files* box, such as *media*. If you want all you projects to use the same settings by default, you can click on the *Save as default project settings* button at the bottom right of the peoject settings window.
+
+### Copying all imported media files into project media subdirectory
+It can be useful to copy all imported media files in the project media subdirectory (refer to the previous section), making the project self-contained if you need for instance to send it over to other persons, or move it to another location on the computer, or to another computer. Keep in mind though that it can be quite demanding in storage space on the hard drive if mant items are imported (e.g. samples).
+In order to activate this option, go to *Options -> Preferences -> Media* and check the box *Copy imported media to project media directory*, then click *Apply*.
+
+
+
 ## Tempo Mapping
 
 *Keywords* : tempo mapping, tempo changes, rhythm signature
@@ -39,7 +52,7 @@ Place yourself on the timeline at the point at which you want to create a marker
 
 *Keywords* : region, marker, arrangement
 
-Create a **time selection** of where you want to create you region. Then, right-click on the timeline and click on *Create region from selection*, or use Shift + R. You can now edit the region by right-clicking on it and clicking on *Edit region*, or you can double-click on it while holding shift. You can then give it a name, a color, an ID, set its position and its length.
+Create a **time selection** of where you want to create you region. Then, right-click on the timeline and click on *Create region from selection*, or use Shift + R. You can now edit the region by right-clicking on it and clicking on *Edit region*, or you can double-click on it while holding Shift. You can then give it a name, a color, an ID, set its position and its length.
 
 ### Moving a region
 When moving a region by clicking on it and dragging it across the timeline, you will actually **move every items it contains**. If you want to change the starting point of a region, you need to **edit it** and manually enter the starting point.
