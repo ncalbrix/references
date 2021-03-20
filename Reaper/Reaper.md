@@ -7,7 +7,7 @@ It adresses various features of the software.
 
 ## Misc tips
 
-*Keywords* : time selection
+*Keywords* : time selection, themes, colors, track customization, track groups, changing multiple tracks at once
 
 ### Extend a time selection from anywhere
 Let's say you have an existing time selection on your project. You extend it from anywhere by holding Shift, and clicking and dragging on the time ruler (at the top of the track lanes) or on an empty space in a track.
@@ -15,11 +15,17 @@ Let's say you have an existing time selection on your project. You extend it fro
 ### Move a time selection
 In order to move a time selection, you need to hold Shift, click somewhere empty in the time selection (on a track with empty space, or on the time ruler), and drag the time selection where you want to place it.
 
+### Advanced track and theme customization
+You can customize the appearance of tracks (colors, items, size) as well as other things (the mixer, etc.) using the Theme Adjuster. In order to open the Theme Adjuster, go to *Options -> Themes -> Theme Adjuster*.
+
+### Temporary track groups
+In order to change a parameter on multiple tracks at once, we can create a temporary track group. To do so, hold Ctrl and click on all the tracks you want to add to the temporary group. Then, any change you make will apply to all these tracks at once (volume modification, panning, muting/soloing, but also splitting at a position in time, etc.).
+You can also bypass the temporary group in order to make a change on only one track without making the temporary group disappear. In order to do so, hold Shift while doing the modification to that track.
 
 
 ## Project setup
 
-*Keywords* : paths, options, default, media copy, media import
+*Keywords* : paths, options, default, media copy, media import, media subdirectory
 
 ### Writing all media files into project media subdirectory
 Open the project settings (Alt + Enter), an go to the *Media* tab. There, input a subdirectory name in the *Path to save media files* box, such as *media*. If you want all you projects to use the same settings by default, you can click on the *Save as default project settings* button at the bottom right of the peoject settings window.
