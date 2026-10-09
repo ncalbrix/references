@@ -1,0 +1,2 @@
+CDC (Change Data Capture)
+ETL (Extract Transform Load)

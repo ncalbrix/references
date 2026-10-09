@@ -130,7 +130,7 @@ produire plusieurs fois. Notamment, l'étape de Storage se produit en fait tout 
     - Batch vs. Streaming : 
         - Ingestion en streaming : arrivage continu de données, en temps réel ou presque-réel
         - Ingestion en batch : découpage de streaming en paquets de données. Le découpage peut être fait temporellement (un
-          nouveau batch tous les X temps) ou en terme de volume (un nouveau batch tous les X événements/enregistrements etc)
+          nouveau batch tous les X temps) ou en terme de volume (un nouveau batch tous les X événements/enregistrements etc.)
         - Le batch reste une option populaire et robuste, notamment pour l'analytics ou le ML, mais le développement de
           plateformes de streaming et de traitement d'événements rend le traitement continu de streams de données de plus en
           plus populaire.
@@ -139,3 +139,27 @@ produire plusieurs fois. Notamment, l'étape de Storage se produit en fait tout 
 
         - Quelques questions à prendre en considération pour décider si une ingestion en stream est plus propice qu'une ingestion
           en batch en annexe (page 41)
+
+    - Modèle push vs. modèle pull :
+        - Modèle push : le système source va pousser de la donnée vers un endpoint, une message queue, ou autre, que le système
+          d'ingestion va récupérer pour stocker. Dans ce modèle le système d'ingestion est plus "passif"/en écoute. Typiquement
+          plus utilisé dans un contexte de streaming (e.g. un CDC continu où un système source publie un message dans une message
+          queue à chaque fois qu'une ligne est changée dans une BD source)
+        - Modèle pull : le système d'ingestion va requêter directement le système source pour récupérer la nouvelle donnée.
+          Typiquement plus utilisé dans un contexte de batch (e.g. un process ETL)
+
+Étape de Transformation : 
+    - Ensemble de processus de modifications des données brutes provenant d'un système source pour les rendre lisibles, utiles et
+      fiables.
+      Dans le FDE, la Transformation est traitée comme une étape à part entière, alors qu'en pratique les transformations de
+      données se produisent la plupart du temps à plusieurs moments du DEL.
+      Par exemple : 
+        - Transformations simples pendant l'ingestion (transtypages dans les bons types, formattage standard, suppression de
+          données érronées)
+        - Plus tard en base de données : transformation de schema de données, normalisation
+        - Avant de servir un processus de ML : aggregations à grande échelle, featurization (la plupart du temps faites en tandem
+          avec un DS)
+    - À noter que les transformations "en vol" dans une pipeline de streaming deviennent de plus en plus populaires
+    - La logique business ou métier est une source de transformations de données majeure. Dans ces cas, la modélisation de donnée
+      doit être très claire avec des règles business établie pour en tirer le plus de valeur (e.g. les CSP ou catégories d'âge
+      dans la donnée Sofinco)  
