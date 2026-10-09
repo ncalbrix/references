@@ -1,0 +1,7 @@
+dbt : ochestrateur pour requêtes SQL
+
+Beam : framework pour définir des pipelines de données en batch et streaming. Possède plusieurs
+    SDKs (Java, Python, Go, Scala) et plusieurs back-end pour l'exécution des pipelines (Flink,
+    Nemo, Spark, Google Cloud Dataflow, Hazelcast Jet, Twister2)
+
+Flink : framework et moteur de calcul distribué sur des streams de données

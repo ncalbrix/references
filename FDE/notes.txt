@@ -1,0 +1,141 @@
+Chapter 1 : Data Engineering Described
+
+Rôles du DE selon la maturité de l'utilisation de data dans l'entreprise (data maturity model) : 
+    - Débutant de la donnée (starting with data) :
+        - Contexte : 
+            - Entreprise avec des buts peu/pas définis, une archi et une infra de donnée à un stade précoce
+            - Le DE est souvent multi-casquette à ce stade, il peut aussi être DA, DS, Software Eng
+            - Possible volonté de se plonger direct dans le ML : souvent mauvaise idée, les projets stagnent sans
+            une bonne archi de données et une bonne compréhensions des données dispo et des buts recherchés
+
+        - Objectifs du DE :
+            - Avoir le soutien de key stakeholders pour des décisions critiques (design d'archi, priorités, etc)
+            - Définir la bonnne archi de données
+            - Comprendre et auditer la donnée utile
+            - Créer la "culture de la donnée" de la boîte pour les futurs DA et DS, et générer les reportings
+            ad-hoc en attendant
+
+        - Conseils :
+            - Créer des quick wins pour gagner la confiance des patron, mais garder en tête que les quick wins
+            génèrent de la dette technique, avoir un plan pour la réduire
+            - Ne pas travailler seul dans son coin : parler avec les autres équipes pour s'assurer de créer ou
+            implémenter des outils utiles que les autres utiliseront
+            - Utiliser le plus possible des solutions clefs en main
+            - Créer des solutions custom uniquement si elles fournissent des avantages compétitifs
+
+    - Intermédiaire de la donnée (scaling with data) :
+        - Contexte : 
+            - L'entreprise commence à avoir des process de données formels, et de moins en moins de besoins ad-hoc
+            - Le DE n'est plus généraliste mais devient spécialiste se focalisant sur un ou des aspects particuliers
+            du Data Engineering Lifecycle
+            - L'objectif est maintenant de créer une architecture de données scalable
+
+        - Objectifs du DE : 
+            - Établir des process formels autour de la donnée
+            - Créer des archi de données robustes et scalable
+            - Adopter des pratique DevOps et DataOps
+            - Construire des systèmes pour le ML
+            - Customiser uniquement quand ça apporte un avantage compétitif (ex : système de recalcul de segments chez Nulberly)
+
+        - Conseils :
+            - Ne pas tomber dans le piège d'adopter des technos toutes nouvelles buzzwords
+            - Utiliser des solution simples à déployer et à maintenir pour que l'équipe DE soit efficace
+            - Communiquer autour de l'utilité de la data, avoir un rôle de formation autour de l'usage de la data
+
+    - Leader de la donnée (leading with data) :
+        - Contexte : 
+            - L'entreprise est désormais DATA-DRIVEN
+            - Les pipelines de données mises en place permettent aux équipes de faire du self-service analytics
+            - L'intégration de nouvelles sources de données est fluide
+            - Le DE implémente des systèmes de contrôle et des pratiques assurant la disponibilité de la donnée
+
+        - Objectifs du DE :
+            - Automatiser l'intégration de nouvelles sources de données
+            - Créer des outils custom pour avoir un avantage compétitif business
+            - Se focaliser sur des tâches de maintenance de la donnée et de DataOps
+            - Déployer des outils permettant l'accès à la data à travers toute l'entreprise
+            - Collaborer avec les Software Eng, ML eng, DA, etc; et créer une communauté technique pour la collaboration
+            des équipes
+
+        - Conseils : 
+            - Éviter la complaisance afin de ne pas créer de la dette technique, se focaliser sur la maintenance
+            et l'amélioration
+            - Éviter les projets hobby inutiles, les distractions tech
+
+
+Les langages que doit maîtriser un DE : 
+    - SQL (ainsi que les formalismes modernes pour traiter les objets JSON et les données nested)
+    - Python
+    - Langage JVM, Java ou Scala principalement
+    - bash
+
+    - Secondairement, il est utile d'avoir des notions parmi les langages suivant : JavaScript, R, Go, Rust, C/C++, C#, Julia
+
+
+Chapter 2 : The Data Engineering Lifecycle
+
+Le data engineering lifecycle (DEL): framework du livre pour décrire les différentes étapes depuis les données brutes jusqu'au
+produit fini à destination des DA, DS, MLE, clients et autres.
+Il est divisé en 5 étapes : 
+    - Generation
+    - Storage
+    - Ingestion
+    - Transformation
+    - Serving Data
+
+Le DEL a un certain nombre de thèmes sous-jacents : sécurité, data management, DataOps, data architecture, orchestration,
+software engineering.
+En application, le DEL n'est pas forcément une suite bien organisée de ces étapes : certaines étapes peuvent se répéter, ou se
+produire plusieurs fois. Notamment, l'étape de Storage se produit en fait tout au long du DEL.
+
+Étape de Generation : 
+    - Systèmes source : systèmes à l'origine des données brutes utilisées dans le DEL (appareil ou essaim IoT, message queue,
+      API, DB, etc.)
+      Le DE doit comprendre le fonctionnement des systèmes sources avec lesquels il intéragit : leur façon de générer de la
+      donnée, la fréquence et vitesse de génération, la variété des données générées.
+      Le DE doit aussi avoir une ligne de communication avec les owners des systèmes sources, afin de prévoir les changements
+      qui peuvent survenir dans ces systèmes (changement de formalisme, de type de champ, ou même de backend DB)
+      Challenge du DE : travailler avec un nombre de systèmes sources variés, être organisé pour bien les connaître, leurs
+      quirks etc.
+      Le DE doit se poser un certain nombre de question concernant un système source pour bien le connaître (voir liste pages
+      36-37, en annexe)
+
+Étape de Storage :
+    - La façon de stocker des données/la tech utilisée pour le faire a un grand impact sur la façon dont les données vont être
+      utilisées, et de manière générale sur le reste du DEL, ceci car les systèmes de stockage ne sont jamais QUE des systèmes
+      de stockage : les DB ont de grandes capacités de query et transformation, certains stockages d'objets supportent des
+      queries (Amazon S3 Select), des frameworks de streaming (Kafka, Pulsar) peuvent faire de l'ingestion, du stockage, et
+      supportent même des systèmes de query sur les messages qu'ils contiennent.
+      De plus, au sein d'un même DEL, un système de stockage peut aussi être simultanément un système source.
+
+    - Pour chaque type de donnée, le DE doit prendre en compte la fréquence d'accès à cette donnée (température) dans le choix
+      du système de stockage : 
+        - Hot Data : donnée requêtée plusieurs fois par jour, peut-être plusieurs fois par seconde (e.g. dans le cas de requêtes
+        utilisateur sur un website). Nécessite un stockage rapide
+        - Lukewarm Data : donnée requêtée toutes les semaines, ou tous les mois
+        - Cold Data : donnée très peu requêtée, souvent données d'archive
+
+    - Le DE doit se poser un certains nombre de questions sur la donnée afin de choisir un système de stockage approprié (voir
+      liste pages 38-39, en annexe)
+
+Étape d'Ingestion :
+    - L'Ingestion désigne le ou les morceaux de software qui vont requêter les données et les écrire effectivement dans un
+      système de stockage. Ils font le lien entre les systèmes sources et les systèmes de stockages. 
+    - Les systèmes sources et les systèmes d'ingestion sont les plus gros bottlenecks du DEL. La plupart du temps, les systèmes
+      sources sont en dehors de la responsabilité du DE (sauf système source interne), les systèmes d'ingestion doivent donc
+      recevoir un soin tout particulier.
+
+    - Questions à se poser en préparation du développement d'un système d'ingestion en annexe (page 40)
+
+    - Batch vs. Streaming : 
+        - Ingestion en streaming : arrivage continu de données, en temps réel ou presque-réel
+        - Ingestion en batch : découpage de streaming en paquets de données. Le découpage peut être fait temporellement (un
+          nouveau batch tous les X temps) ou en terme de volume (un nouveau batch tous les X événements/enregistrements etc)
+        - Le batch reste une option populaire et robuste, notamment pour l'analytics ou le ML, mais le développement de
+          plateformes de streaming et de traitement d'événements rend le traitement continu de streams de données de plus en
+          plus populaire.
+          De manière générale, l'ingestion en streaming doit uniquement être implémentée dans les cas spécifiques où la containte
+          temporelle est indispensable dans le système final, car le streaming vient avec un lot de coûts et de complexités.
+
+        - Quelques questions à prendre en considération pour décider si une ingestion en stream est plus propice qu'une ingestion
+          en batch en annexe (page 41)
