@@ -88,6 +88,9 @@ software engineering.
 En application, le DEL n'est pas forcément une suite bien organisée de ces étapes : certaines étapes peuvent se répéter, ou se
 produire plusieurs fois. Notamment, l'étape de Storage se produit en fait tout au long du DEL.
 
+
+Étapes du DEL
+
 Étape de Generation : 
     - Systèmes source : systèmes à l'origine des données brutes utilisées dans le DEL (appareil ou essaim IoT, message queue,
       API, DB, etc.)
@@ -157,9 +160,59 @@ produire plusieurs fois. Notamment, l'étape de Storage se produit en fait tout 
         - Transformations simples pendant l'ingestion (transtypages dans les bons types, formattage standard, suppression de
           données érronées)
         - Plus tard en base de données : transformation de schema de données, normalisation
-        - Avant de servir un processus de ML : aggregations à grande échelle, featurization (la plupart du temps faites en tandem
+        - Avant de servir un processus de ML : agrégations à grande échelle, featurization (la plupart du temps faites en tandem
           avec un DS)
     - À noter que les transformations "en vol" dans une pipeline de streaming deviennent de plus en plus populaires
     - La logique business ou métier est une source de transformations de données majeure. Dans ces cas, la modélisation de donnée
       doit être très claire avec des règles business établie pour en tirer le plus de valeur (e.g. les CSP ou catégories d'âge
-      dans la donnée Sofinco)  
+      dans la donnée Sofinco)
+
+Étape de Serving :
+    - Étape du DEL où l'on va créer de la valeur à partir de la donnée recueillie. Créer de la valeur veut dire utiliser la
+      donnée à une fin utile pour l'entreprise. Il faut garder à l'esprit qu'il faut éviter les "projets d'orgueil" : des projets
+      dans lesquels la donnée finale n'est jamais utilisée (typiquement, des projets ou l'aspect technique est privilégié par
+      rapport à l'apport final de la donnée).
+    - Quelques applications pour lesquelles on doit servir de la donnée : analytics, ML, reverse ETL
+
+    - Analytics :
+        - Coeur de la plupart des projets data. Ici, découpée en 3 types d'analytics : BI, Opérationnelle, Intégrée
+
+        - BI : type d'analytics qui utilise des données pour décrire l'état passé et présent d'un aspect business, voire pour
+          émettre des prédictions. Se repose sur des règles business bien établies.
+          Dans ce type d'analytics, on ne suit pas non plus forcément strictement les étapes du DEL, notamment au niveau de la
+          définition des règles business : celle-ci peuvent être définies préalablement pendant l'étape de Transformation, ou au
+          contraire laisser la donnée propre mais peu transformée et appliquer les règles business au moment du Serving pour une
+          analyse BI.
+          Un système BI peut gérer un répertoire de logiques et définitions business qui seront utilisées par les users pour
+          requêter la donnée et créer des analyses. Ce genre de pratiques de self-service apparaît plutôt dans des entreprises
+          à haut niveau de maturité data, et nécessitent une donnée de bonne qualité, ainsi qu'une bonne organisation.
+
+        - Opérationnelle : type d'analytics qui se focalise sur un aspect terre à terre de l'entreprise (état de stocks, santé
+          d'une app, traffic sur un site, etc.). Souvent de l'analyse en temps réel qui bénéficie de systèmes de streaming.
+          Diffère du BI en le fait qu'elle se concentre sur des données actuelles et non historiques.
+
+        - Intégrée : type d'analytics qui est réalisée directement par un client hors de l'entreprise, via un accès à la donnée
+          (typiquement un SaaS). Pose un certain nombres de problématiques différentes des analyses BI internes : volume de
+          requêtes, silotage des données, sécurisation des données et des accès, problématiques d'ownership, etc.
+
+    - ML :
+        - Dans ce domaine, les responsabilités des DE se recoupent beaucoup avec celles liées à l'analytics. Les frontières entre
+          DE, MLE et analytics engineers peuvent être assez floues.
+          Un outil spécifique au ML qui peut être déployé est le Feature Store, qui permets à différentes équipes ou projets de
+          partager des features pour leurs modèles de ML, ainsi qu'avoir un historique de définitions de ces features
+        - Un DE n'a pas besoin d'être expert en ML, avoir quelques bases est néanmoins très utile, ainsi que connaître les use
+          cases des modèles de ML dans l'entreprise, et les responsabilités des différentes équipes d'analytics et DS; ceci afin
+          de maintenir une communication et collaboration efficace.
+        - Attention à ne pas se lancer dans des projets ML ambitieux trop tôt, il est toujours préférable d'avoir une solide
+          plateforme et culture de données avant.
+
+    - Reverse ETL :
+        - C'est la pratique de prendre de la donnée ingérée et transformée (l'output du DEL), et la feed à nouveau dans un
+          système source. Historiquement considérée comme un antipattern, cette pratique est de plus en plus utilisée, souvent
+          avantageuse ou indispensable (e.g. utiliser les résultats d'une analyse, les scores calculés par un modèle, etc, et les
+          stocker dans un système de production ou un système SaaS pour un client externe).
+        - Exemple en marketing : calculer des bids sur les line items en utilisant un modèle de ML, puis feed ces résultats dans
+          une DSP style Google Ads.
+
+
+Thèmes sous-jacent du DEL
