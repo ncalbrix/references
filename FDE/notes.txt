@@ -210,9 +210,67 @@ produire plusieurs fois. Notamment, l'étape de Storage se produit en fait tout 
         - C'est la pratique de prendre de la donnée ingérée et transformée (l'output du DEL), et la feed à nouveau dans un
           système source. Historiquement considérée comme un antipattern, cette pratique est de plus en plus utilisée, souvent
           avantageuse ou indispensable (e.g. utiliser les résultats d'une analyse, les scores calculés par un modèle, etc, et les
-          stocker dans un système de production ou un système SaaS pour un client externe).
+          stocker/utiliser dans un système de production ou un système SaaS pour un client externe).
         - Exemple en marketing : calculer des bids sur les line items en utilisant un modèle de ML, puis feed ces résultats dans
           une DSP style Google Ads.
 
 
 Thèmes sous-jacent du DEL
+    - Avec la maturité, la pratique du Data Engineering s'abstrait de plus en plus de la tech et englobe un certain nombre de
+      pratiques et thèmes sous-jacents : Sécurité, Data Management, DataOps, Data Architecture, Orchestration, Software Engineering
+
+    - Sécurité :
+        - Les DE doivent comprendre la sécurité des données et des accès, et mettre en place le principe least privilege : donner
+          accès à un utilisateur ou système uniquement au données et ressources essentielles pour leurs tâches (par opposition au
+          fait de donner des droits admin à tout le monde).
+        - Créer/promouvoir une culture de sécurité informatique/d'accès à la donnée, en tandem avec une équipe de sécu si elle
+          existe
+        - Il faut aussi gérer la sécurité dans le temps (e.g. créer des rôles d'accès révocables automatiquement dans le temps
+          pour accès à une donnée sensible)
+        - Un DE doit comprendre le user management et l'identity access management (IAM), un peu de sécurité réseau, politique de
+          gestion des mdp. Sur cet aspect, le DE se rapproche un peu d'un administrateur système.
+
+    - Data Management : 
+        - Gros sujet très "enterprise", ensemble de politiques de gestion et d'éléments culturels liés à la donnée au sein d'une
+          entreprise. Définition dans le Data Management Body of Knowledge : 
+            "Data management is the development, execution, and supervision of plans, policies,
+             programs, and practices that deliver, control, protect, and enhance the value of data
+             and information assets throughout their lifecycle."
+        - Le Data Management englobe un certain nombre d'aspects, qui incluent : 
+            - La gouvernance des données (ainsi que la découvrabilité et la responsabilité de chaque donnée)
+            - La modélisation et le design
+            - Le Data Lineage
+            - Le stockage et les opérations
+            - Intégration et l'interopérabilité
+            - le Data Lifecycle Management
+            - Les systèmes pour l'analytics avancée et le ML
+            - L'éthique et la vie privée
+
+        - La gouvernance de la donnée :
+            - Ensemble de pratiques pour assurer la qualité, l'intégrité, la sécurité et l'utilisabilité des données. La
+              gouvernance encourage les personnes, processus et systèmes à maximiser la valeur de la donnée au travers d'une
+              entreprise, tout en la protégeant avec des contrôles de sécurité appropriés.
+            - La gouvernance englobe les sujets centraux de découvrabilité, sécurité, et responsabilité.
+
+            - Découvrabilité : 
+                - Capacité d'un utilisateur final à avoir un accès rapide et fiable à la donnée dont il a besoin. Il doit pouvoir
+                  savoir d'où la donnée vient, son lien avec d'autres données, et sa signification (+ accès simple à de la doc
+                  pour un user technique : type des champs, schema, définitions, etc.)
+                  Concepts clefs : gestion des métadonnées, Master Data Management
+
+                - Gestion des métadonnées : 
+                    - Métadonnées : données sur la donnée; soutien l'intégralité du DEL. C'est la donnée nécessaire pour rendre
+                      la donnée générale découvrable et gouvernable.
+                      Deux types : générées automatiquement, et générées par un acteur humain (sujet à erreurs).
+                    - De plus en plus d'outils existent pour collecter et gérer les métadonnées : data catalogs, data-lineage
+                      tracking systems, outils de gestion de métadonnées. Certains outils permettent de parcourir des BD pour
+                      mettre en évidence les liens entre les données, et surveiller des pipelines de données pour créer
+                      automatiquement un lineage de la données (quelle donnée vient d'où, où elle va, par qui/quoi elle est
+                      ensuite utilisée, etc.)
+                    - Certains défi restent à prendre en compte : interopérabilité (e.g. connection d'un système de gestion de
+                      métadonnées avec une BD) et standards.
+                    - Aspect social des métadonnées : owners, consumers, experts de domaines
+                    - 4 catégories de métadonnées utiles au DE : business, techniques, opérationnelles, de référence
+
+                    - Métadonnées de business : 
+                        - 
