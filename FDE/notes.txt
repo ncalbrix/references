@@ -147,7 +147,7 @@ produire plusieurs fois. Notamment, l'étape de Storage se produit en fait tout 
         - Modèle push : le système source va pousser de la donnée vers un endpoint, une message queue, ou autre, que le système
           d'ingestion va récupérer pour stocker. Dans ce modèle le système d'ingestion est plus "passif"/en écoute. Typiquement
           plus utilisé dans un contexte de streaming (e.g. un CDC continu où un système source publie un message dans une message
-          queue à chaque fois qu'une ligne est changée dans une BD source)
+          queue à chaque fois qu'une ligne est changée dans une DB source)
         - Modèle pull : le système d'ingestion va requêter directement le système source pour récupérer la nouvelle donnée.
           Typiquement plus utilisé dans un contexte de batch (e.g. un process ETL)
 
@@ -221,14 +221,14 @@ Thèmes sous-jacent du DEL
 
     - Sécurité :
         - Les DE doivent comprendre la sécurité des données et des accès, et mettre en place le principe least privilege : donner
-          accès à un utilisateur ou système uniquement au données et ressources essentielles pour leurs tâches (par opposition au
+          accès à un utilisateur ou système uniquement aux données et ressources essentielles pour leurs tâches (par opposition au
           fait de donner des droits admin à tout le monde).
         - Créer/promouvoir une culture de sécurité informatique/d'accès à la donnée, en tandem avec une équipe de sécu si elle
           existe
         - Il faut aussi gérer la sécurité dans le temps (e.g. créer des rôles d'accès révocables automatiquement dans le temps
           pour accès à une donnée sensible)
-        - Un DE doit comprendre le user management et l'identity access management (IAM), un peu de sécurité réseau, politique de
-          gestion des mdp. Sur cet aspect, le DE se rapproche un peu d'un administrateur système.
+        - Un DE doit comprendre le user management et l'identity and access management (IAM), un peu de sécurité réseau, politique
+          de gestion des mdp. Sur cet aspect, le DE se rapproche un peu d'un administrateur système.
 
     - Data Management : 
         - Gros sujet très "enterprise", ensemble de politiques de gestion et d'éléments culturels liés à la donnée au sein d'une
@@ -263,14 +263,60 @@ Thèmes sous-jacent du DEL
                       la donnée générale découvrable et gouvernable.
                       Deux types : générées automatiquement, et générées par un acteur humain (sujet à erreurs).
                     - De plus en plus d'outils existent pour collecter et gérer les métadonnées : data catalogs, data-lineage
-                      tracking systems, outils de gestion de métadonnées. Certains outils permettent de parcourir des BD pour
-                      mettre en évidence les liens entre les données, et surveiller des pipelines de données pour créer
+                      tracking systems, outils de gestion de métadonnées. Certains outils permettent de parcourir des DB pour
+                      mettre en évidence les liens entre les données/tables, et surveiller des pipelines de données pour créer
                       automatiquement un lineage de la données (quelle donnée vient d'où, où elle va, par qui/quoi elle est
                       ensuite utilisée, etc.)
                     - Certains défi restent à prendre en compte : interopérabilité (e.g. connection d'un système de gestion de
-                      métadonnées avec une BD) et standards.
+                      métadonnées avec une DB) et standards.
                     - Aspect social des métadonnées : owners, consumers, experts de domaines
                     - 4 catégories de métadonnées utiles au DE : business, techniques, opérationnelles, de référence
 
                     - Métadonnées de business : 
-                        - 
+                        - Contiennent les définitions, règles et logiques business (e.g. comment est défini un client? etc.)
+
+                    - Métadonnées techniques :
+                        - Donnée créée et utilisée par les systèmes du DEL (modèles, schema, lineage, champs et types, workflow
+                          des pipelines)
+                        - Métadonnées de pipeline : créées/capturées par des systèmes d'orchestration type Airflow (e.g. horaire
+                          planifié, dépendances systèmes et de données, configurations, détails de connexion, etc.)
+                        - Métadonnées de lineage : compile les origines, changements et dépendances d'une donnée dans le temps
+                        - Métadonnées de schema : décrit la structure d'une données stockée sur un système (DB, Data Warehouse,
+                          Data Lake, système de fichiers)
+
+                    - Métadonnée opérationnelle :
+                        - Décrivent les résultats et sorties opérationnelles de différents systèmes : statistiques sur les
+                          processus, ID de jobs, données utilisées dans un process, logs de runtime, logs d'erreurs
+
+                    - Métadonnée de référence :
+                        - Donnée pour classer d'autres données/lookup tables (e.g. codes internes comme des codes de produits,
+                          codes géographiques, unités de mesures, etc.)
+
+            - Responsabilité :
+                - Assigner à un individu (pas forcément DE) la gouvernance d'une donnée, qui coordonnera les efforts de
+                  gouvernance entre les différents acteurs concernés
+                - La responsabilité peut-être attribuée selon plusieurs niveau de granularité : par ex un individu responsable
+                  d'une table ou d'un stream de logs, ou un individu responsable d'un champ spécifique (définition, évolution
+                  dans le temps) utilisé au travers de plusieurs tables/systèmes.
+
+            - Qualité :
+                - La qualité d'une donnée représente la conformité de la donnée avec ce qu'on attend d'elle. La donnée doit
+                  notamment être conforme aux métadonnées de business (définitions, logiques, etc.). Le DE doit s'assurrer de la
+                  qualité de la donnée tout au long du DEL, notamment au travers de tests variés.
+                - On peut définir la qualité de la donnée selon trois axes :
+                    - Précision : la donnée est-elle factuellement correcte? y a-t-il des valeurs dupliquées? les valeurs
+                      numériques sont-elles précises?
+                    - Complétion : est-ce que les enregistrements sont complets? est-ce que tous les champs requis ont une valeur
+                      valide?
+                    - Ponctualité : est-ce que les enregistrements sont disponibles dans un temps raisonnable/quand on en a
+                      besoin?
+                - Chacun de ces axes est nuancés et n'a pas de solution technique définitive, la plupart du temps ils doivent
+                  être abordés conjointement de façon humaine et avec des solutions techniques.
+                - Exemples :
+                    - Sur un website, que le traffic généré par des robots est-il pertinent par rapport à ce que l'on essaie de
+                      mesurer? Si non, il faut un moyen de flagger ce traffic afin de ne pas compromettre la précision de la
+                      donnée globale
+                    - Sur une app avec un fonctionnement hors-ligne, à quel moment définit-on qu'une donnée n'est plus ponctuelle?
+                      Quels standards met-on en place pour la donnée non-ponctuelle, et comment les faire appliquer?
+
+        - La modélisation et le design de données :
