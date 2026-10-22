@@ -241,7 +241,7 @@ Thèmes sous-jacent du DEL
             - La modélisation et le design
             - Le Data Lineage
             - Le stockage et les opérations
-            - Intégration et l'interopérabilité
+            - L'intégration et l'interopérabilité
             - le Data Lifecycle Management
             - Les systèmes pour l'analytics avancée et le ML
             - L'éthique et la vie privée
@@ -313,10 +313,52 @@ Thèmes sous-jacent du DEL
                 - Chacun de ces axes est nuancés et n'a pas de solution technique définitive, la plupart du temps ils doivent
                   être abordés conjointement de façon humaine et avec des solutions techniques.
                 - Exemples :
-                    - Sur un website, que le traffic généré par des robots est-il pertinent par rapport à ce que l'on essaie de
+                    - Sur un website, le traffic généré par des robots est-il pertinent par rapport à ce que l'on essaie de
                       mesurer? Si non, il faut un moyen de flagger ce traffic afin de ne pas compromettre la précision de la
                       donnée globale
                     - Sur une app avec un fonctionnement hors-ligne, à quel moment définit-on qu'une donnée n'est plus ponctuelle?
                       Quels standards met-on en place pour la donnée non-ponctuelle, et comment les faire appliquer?
 
         - La modélisation et le design de données :
+            - Pratique par laquelle on transforme une donnée brute vers une forme utilisable (à des fins d'analytics et de ML).
+            - Traditionnellement une pratique de DB Administrator (DBA) ou développeur ETL, la modélisation et le design de
+              données peut en fait intervenir à beaucoup d'endroit différent (ingénieur qui développe le format de logs d'un
+              appareil IoT, webdev la réponse JSON d'une API ou le schema d'une table SQL).
+            - Pratique qui devient complexes avec la multiplication des types, formats et usages des données, néanmoins de plus
+              en plus d'outils prennent ça en compte pour accroître la flexibilité du design tout en gardant des séparations
+              logiques et hiérarchiques.
+            - La modélisation est un sujet important malgré la difficulté qui vient avec la multiplicité des données, sans quoi
+              on se retrouve rapidement avec de la donnée écrite et jamais utilisée (car inutilisable)
+            - Éxemple de grand chantier de modélisation de données : la normalisation des bases clients chez Numberly
+
+        - Le Data Lineage :
+            - (lit. la lignée des données, les ancêtres des données) Processus de tracking, pour une donnée, des systèmes qui
+              l'ont traitée et des autres données dont elle dépend.
+            - Aide beaucoup pour la recherche d'erreurs, la compréhension/répartition des responsabilités, et le debuggage.
+            - Avoir un data lineage clair et efficace facillite notamment d'être en conformité avec différentes réglementations
+              (RGPD, etc.) : si un utilisateur veut que l'on supprime les données qui le concernent, on peut facilement trouver
+              d'où elles viennent afin de les supprimer/d'arrêter de les recueillir.
+
+        - L'intégration et l'interopérabilité :
+            - Fait d'intégrer les données au sein d'une multiplicité d'outils, de techs et de processus.
+            - Sujet de plus en plus important à mesure que l'on travaille dans une environnement cloud et/ou hétérogène, où
+              différents outils doivent traiter la donnée à la demande.
+            - L'intégration se fait de plus en plus via des API tout-usage, plutôt qu'en utilisant des connecteurs DB dédiés
+              (e.g. on pull d'un système source via son API, on stocke sur un S3, on utilise l'API Snowflake pour charger cette
+              donnée dans une table, lancer une query, exporter les résultats, etc.)
+            - Ceci fait que ces traitements d'intégrations peuvent se faire facilement avec des scripts Python et une lib
+              d'appels http, mais la complexité va résider dans la multiplication de ces traitements et la complexité des
+              pipelines qui en découlent. Pour gérer tout ça, on a besoin d'outils d'orchestration.
+
+        - Data Lifecycle Management :
+            - Gestion de la fin de vie des données.
+            - Deux raisons principales : 
+                - L'espace de stockage : soit il est limité on-premise, soit il est de plus en plus coûteux via un service cloud
+                - Les règlements type RGPD qui oblige à supprimer des données après un certain temps, ou sur demande des
+                  utilisateurs
+            - La suppression de données de façon granulaire est le plus souvent simple dans un Data Warehouse sur le cloud, via
+              des clauses WHERE en SQL.
+            - Sur des technologies moins flexibles (e.g. Hive), il existe souvent des outils pour gérer facilement la suppression
+              de lignes en DB (e.g. Hive ACID)
+
+        - Éthique et vie privée :

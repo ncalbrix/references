@@ -1,3 +1,6 @@
 CDC (Change Data Capture)
 ETL (Extract Transform Load)
 IAM (Identity and Access Management)
+Patterns de modélisation de données : Kimball, Inmon, Data Vault
+Transactions ACID (atomicity, consistency, isolation, durability)
+Transactions BASE (basically available, soft state, and eventually consistent)
