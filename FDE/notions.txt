@@ -1,6 +1,12 @@
-CDC (Change Data Capture)
-ETL (Extract Transform Load)
-IAM (Identity and Access Management)
+Change Data Capture (CDC)
+Configuration as Code
+Continuous Integration/Continuous Delivery (CI/CD)
+Data Observability Driven Development (DODD)
+Extract Transform Load (ETL)
+Identity and Access Management (IAM)
 Patterns de modélisation de données : Kimball, Inmon, Data Vault
+Personally Identifiable Information (PII)
+Statistical Process Control (SPC)
+Test Driven Development (TDD)
 Transactions ACID (atomicity, consistency, isolation, durability)
 Transactions BASE (basically available, soft state, and eventually consistent)

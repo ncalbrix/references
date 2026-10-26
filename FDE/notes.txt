@@ -310,7 +310,7 @@ Thèmes sous-jacent du DEL
                       valide?
                     - Ponctualité : est-ce que les enregistrements sont disponibles dans un temps raisonnable/quand on en a
                       besoin?
-                - Chacun de ces axes est nuancés et n'a pas de solution technique définitive, la plupart du temps ils doivent
+                - Chacun de ces axes est nuancé et n'a pas de solution technique définitive, la plupart du temps ils doivent
                   être abordés conjointement de façon humaine et avec des solutions techniques.
                 - Exemples :
                     - Sur un website, le traffic généré par des robots est-il pertinent par rapport à ce que l'on essaie de
@@ -323,13 +323,13 @@ Thèmes sous-jacent du DEL
             - Pratique par laquelle on transforme une donnée brute vers une forme utilisable (à des fins d'analytics et de ML).
             - Traditionnellement une pratique de DB Administrator (DBA) ou développeur ETL, la modélisation et le design de
               données peut en fait intervenir à beaucoup d'endroit différent (ingénieur qui développe le format de logs d'un
-              appareil IoT, webdev la réponse JSON d'une API ou le schema d'une table SQL).
-            - Pratique qui devient complexes avec la multiplication des types, formats et usages des données, néanmoins de plus
+              appareil IoT, webdev qui design la réponse JSON d'une API ou le schema d'une table SQL).
+            - Pratique qui devient complexe avec la multiplication des types, formats et usages des données, néanmoins de plus
               en plus d'outils prennent ça en compte pour accroître la flexibilité du design tout en gardant des séparations
               logiques et hiérarchiques.
             - La modélisation est un sujet important malgré la difficulté qui vient avec la multiplicité des données, sans quoi
               on se retrouve rapidement avec de la donnée écrite et jamais utilisée (car inutilisable)
-            - Éxemple de grand chantier de modélisation de données : la normalisation des bases clients chez Numberly
+            - Exemple de grand chantier de modélisation de données : la normalisation des bases clients chez Numberly
 
         - Le Data Lineage :
             - (lit. la lignée des données, les ancêtres des données) Processus de tracking, pour une donnée, des systèmes qui
@@ -362,3 +362,63 @@ Thèmes sous-jacent du DEL
               de lignes en DB (e.g. Hive ACID)
 
         - Éthique et vie privée :
+            - Responsabilité du DE (entre autre) de promouvoir une culture de la donnée mettant la vie privée au coeur des
+              différentes considérations. Les DE doivent faire cet effort conscient malgré le fait que ce soit un sujet souvent
+              négligé.
+            - Notamment : faire en sorte qu'aucune information personnellement identifiable (PII) ne soit sauvegardée; faire en
+              sorte d'éviter le plus possible l'appartition de biais (racistes, sociaux, etc.) dans les jeux de données (en
+              conjonction avec les DS).
+
+        - DataOps :
+            - Fait correspondre les best practices de méthodes Agile, DevOps et Statistical Process Control (SPC) aux produits
+              data.
+            - Selon Data Kitchen :
+                DataOps is a collection of technical practices, workflows, cultural norms, and architec‐
+                tural patterns that enable:
+                    • Rapid innovation and experimentation delivering new insights to customers with
+                    increasing velocity
+                    • Extremely high data quality and very low error rates
+                    • Collaboration across complex arrays of people, technology, and environments
+                    • Clear measurement, monitoring, and transparency of results
+
+            - En premier lieu, les DataOps sont un ensemble de pratiques culturelles et politiques au sein d'une entreprise :
+              cycles de communication et collaboration avec le métier, amélioration continue, itérations rapide.
+            - L'implémentation de pratiques de DataOps peut varier selon le niveau de maturité data d'une entreprise : dans une
+              entreprise peu mature, les DataOps peuvent être implémentées dès les premières heures des projets pour faire partie
+              intégrente de la culture des process de l'entreprise; pour une entreprise déjà mature mais qui manque de DataOps, 
+              le DE peut commencer à implémenter ces pratiques dans les workflows petit à petit, en commençant par de
+              l'observabilité et du monitoring (e.g. mail auto pour prévenir de jobs qui ont crash, ou bot sur un channel
+              slack/mattermost).
+            - Quel que soit le niveau de maturité de l'entreprise, le DE doit être au courant des aspects culturels et techniques
+              des DataOps
+            - Les DataOps peuvent être séparés en trois composantes techniques : l'automatisation, l'observabilité et monitoring,
+              et la réponse sur incident
+
+                - Automatisation :
+                    - Explicite. Similaire au DevOps dans les pratiques, i.e. change management (contrôle de version des
+                      environements, du code, de la donnée), intégration continue/déploiement continu (CI/CD), et configuration
+                      as code.
+                    - Exemple sur 3 étapes de maturité :
+                        - Peu mature : jobs cron hébergés sur le cloud, peu/pas de logs ou de messages d'erreurs, pas de gestion
+                          de dépendance entre jobs (un job cron se finit trop tard, un autre downstream a donc commencé et va
+                          crash ou utiliser des données périmées)
+                        - Assez mature : mise en place d'un framework d'orchestration type Airflow ou Dagster, les jobs cron sont
+                          migrés vers des DAG Airflow, les dépendances entre DAG sont gérées par le framework, les jobs peuvent
+                          être lancés plus rapidement car automatiquement après leurs dépendances
+                        - Très mature : un DS déploie un DAG buggé, qui fait crash le webserver Airflow. L'équipe DE empêche donc
+                          le déploiement manuel de DAGs et implémente des tests automatiques et des processus de monitoring pour
+                          s'assurer que chaque nouveau DAG se déploie correctement.
+                    - Les DE peuvent aussi développer du custom code/framework pour des aspects précis, e.g. de la gestion de
+                      metadonnées ou de lineage
+
+                - Observabilité et Monitoring :
+                    - Va consister en un certain nombre de processus de monitoring et d'alerting (logs, mail, bots de chats,
+                      notifications) et de traçage (stacktrace, lineage de jobs en erreur).
+                    - Les conséquences de l'absence de processus d'observabilités peuvent être catastrophiques : utilisation de
+                      données périmées/erronées pour faire des décisions business ou entraîner des modèles qui à leur tour
+                      produiront des prédictions peu fiables. À terme, ça peut complètement fragiliser la confiance des
+                      dirigeants envers les équipes data.
+                    - Voir la méthode DODD (Data Observability Driven Development), analogue du TDD (Test Driven Development),
+                      même si en pratique je pense que c'est difficile à implémenter comme type de design.
+
+                - Réponse sur incident :

@@ -1,7 +1,11 @@
-dbt : ochestrateur pour requêtes SQL
+Airflow : framework d'orchestration
 
 Beam : framework pour définir des pipelines de données en batch et streaming. Possède plusieurs
     SDKs (Java, Python, Go, Scala) et plusieurs back-end pour l'exécution des pipelines (Flink,
     Nemo, Spark, Google Cloud Dataflow, Hazelcast Jet, Twister2)
+
+Dagster : framework d'orchestration
+
+dbt : ochestrateur pour requêtes SQL
 
 Flink : framework et moteur de calcul distribué sur des streams de données
