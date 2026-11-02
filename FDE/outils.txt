@@ -8,4 +8,12 @@ Dagster : framework d'orchestration
 
 dbt : ochestrateur pour requêtes SQL
 
+Docker :
+
 Flink : framework et moteur de calcul distribué sur des streams de données
+
+Helm :
+
+Kubernetes :
+
+Pulsar : plateform de messaging et de streaming open-source, faite pour le cloud

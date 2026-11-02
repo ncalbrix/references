@@ -8,5 +8,11 @@ Patterns de modélisation de données : Kimball, Inmon, Data Vault
 Personally Identifiable Information (PII)
 Statistical Process Control (SPC)
 Test Driven Development (TDD)
+Testing :
+    - Unit Testing
+    - Regression Testing
+    - Integration Testing
+    - End-to-End Testing
+    - Smoke Testing
 Transactions ACID (atomicity, consistency, isolation, durability)
 Transactions BASE (basically available, soft state, and eventually consistent)

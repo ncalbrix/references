@@ -369,56 +369,120 @@ Thèmes sous-jacent du DEL
               sorte d'éviter le plus possible l'appartition de biais (racistes, sociaux, etc.) dans les jeux de données (en
               conjonction avec les DS).
 
-        - DataOps :
-            - Fait correspondre les best practices de méthodes Agile, DevOps et Statistical Process Control (SPC) aux produits
-              data.
-            - Selon Data Kitchen :
-                DataOps is a collection of technical practices, workflows, cultural norms, and architec‐
-                tural patterns that enable:
-                    • Rapid innovation and experimentation delivering new insights to customers with
-                    increasing velocity
-                    • Extremely high data quality and very low error rates
-                    • Collaboration across complex arrays of people, technology, and environments
-                    • Clear measurement, monitoring, and transparency of results
+    - DataOps :
+        - Fait correspondre les best practices de méthodes Agile, DevOps et Statistical Process Control (SPC) aux produits
+          data.
+        - Selon Data Kitchen :
+            DataOps is a collection of technical practices, workflows, cultural norms, and architec‐
+            tural patterns that enable:
+                • Rapid innovation and experimentation delivering new insights to customers with
+                increasing velocity
+                • Extremely high data quality and very low error rates
+                • Collaboration across complex arrays of people, technology, and environments
+                • Clear measurement, monitoring, and transparency of results
 
-            - En premier lieu, les DataOps sont un ensemble de pratiques culturelles et politiques au sein d'une entreprise :
-              cycles de communication et collaboration avec le métier, amélioration continue, itérations rapide.
-            - L'implémentation de pratiques de DataOps peut varier selon le niveau de maturité data d'une entreprise : dans une
-              entreprise peu mature, les DataOps peuvent être implémentées dès les premières heures des projets pour faire partie
-              intégrente de la culture des process de l'entreprise; pour une entreprise déjà mature mais qui manque de DataOps, 
-              le DE peut commencer à implémenter ces pratiques dans les workflows petit à petit, en commençant par de
-              l'observabilité et du monitoring (e.g. mail auto pour prévenir de jobs qui ont crash, ou bot sur un channel
-              slack/mattermost).
-            - Quel que soit le niveau de maturité de l'entreprise, le DE doit être au courant des aspects culturels et techniques
-              des DataOps
-            - Les DataOps peuvent être séparés en trois composantes techniques : l'automatisation, l'observabilité et monitoring,
-              et la réponse sur incident
+        - En premier lieu, les DataOps sont un ensemble de pratiques culturelles et politiques au sein d'une entreprise :
+          cycles de communication et collaboration avec le métier, amélioration continue, itérations rapide.
+        - L'implémentation de pratiques de DataOps peut varier selon le niveau de maturité data d'une entreprise : dans une
+          entreprise peu mature, les DataOps peuvent être implémentées dès les premières heures des projets pour faire partie
+          intégrente de la culture des process de l'entreprise; pour une entreprise déjà mature mais qui manque de DataOps, 
+          le DE peut commencer à implémenter ces pratiques dans les workflows petit à petit, en commençant par de
+          l'observabilité et du monitoring (e.g. mail auto pour prévenir de jobs qui ont crash, ou bot sur un channel
+          slack/mattermost).
+        - Quel que soit le niveau de maturité de l'entreprise, le DE doit être au courant des aspects culturels et techniques
+          des DataOps
+        - Les DataOps peuvent être séparés en trois composantes techniques : l'automatisation, l'observabilité et monitoring,
+          et la réponse sur incident
 
-                - Automatisation :
-                    - Explicite. Similaire au DevOps dans les pratiques, i.e. change management (contrôle de version des
-                      environements, du code, de la donnée), intégration continue/déploiement continu (CI/CD), et configuration
-                      as code.
-                    - Exemple sur 3 étapes de maturité :
-                        - Peu mature : jobs cron hébergés sur le cloud, peu/pas de logs ou de messages d'erreurs, pas de gestion
-                          de dépendance entre jobs (un job cron se finit trop tard, un autre downstream a donc commencé et va
-                          crash ou utiliser des données périmées)
-                        - Assez mature : mise en place d'un framework d'orchestration type Airflow ou Dagster, les jobs cron sont
-                          migrés vers des DAG Airflow, les dépendances entre DAG sont gérées par le framework, les jobs peuvent
-                          être lancés plus rapidement car automatiquement après leurs dépendances
-                        - Très mature : un DS déploie un DAG buggé, qui fait crash le webserver Airflow. L'équipe DE empêche donc
-                          le déploiement manuel de DAGs et implémente des tests automatiques et des processus de monitoring pour
-                          s'assurer que chaque nouveau DAG se déploie correctement.
-                    - Les DE peuvent aussi développer du custom code/framework pour des aspects précis, e.g. de la gestion de
-                      metadonnées ou de lineage
+        - Automatisation :
+            - Explicite. Similaire au DevOps dans les pratiques, i.e. change management (contrôle de version des
+              environements, du code, de la donnée), intégration continue/déploiement continu (CI/CD), et configuration
+              as code.
+            - Exemple sur 3 étapes de maturité :
+                - Peu mature : jobs cron hébergés sur le cloud, peu/pas de logs ou de messages d'erreurs, pas de gestion
+                  de dépendance entre jobs (un job cron se finit trop tard, un autre downstream a donc commencé et va
+                  crash ou utiliser des données périmées)
+                - Assez mature : mise en place d'un framework d'orchestration type Airflow ou Dagster, les jobs cron sont
+                  migrés vers des DAG Airflow, les dépendances entre DAG sont gérées par le framework, les jobs peuvent
+                  être lancés plus rapidement car automatiquement après leurs dépendances
+                - Très mature : un DS déploie un DAG buggé, qui fait crash le webserver Airflow. L'équipe DE empêche donc
+                  le déploiement manuel de DAGs et implémente des tests automatiques et des processus de monitoring pour
+                  s'assurer que chaque nouveau DAG se déploie correctement.
+            - Les DE peuvent aussi développer du custom code/framework pour des aspects précis, e.g. de la gestion de
+              metadonnées ou de lineage
 
-                - Observabilité et Monitoring :
-                    - Va consister en un certain nombre de processus de monitoring et d'alerting (logs, mail, bots de chats,
-                      notifications) et de traçage (stacktrace, lineage de jobs en erreur).
-                    - Les conséquences de l'absence de processus d'observabilités peuvent être catastrophiques : utilisation de
-                      données périmées/erronées pour faire des décisions business ou entraîner des modèles qui à leur tour
-                      produiront des prédictions peu fiables. À terme, ça peut complètement fragiliser la confiance des
-                      dirigeants envers les équipes data.
-                    - Voir la méthode DODD (Data Observability Driven Development), analogue du TDD (Test Driven Development),
-                      même si en pratique je pense que c'est difficile à implémenter comme type de design.
+        - Observabilité et Monitoring :
+            - Va consister en un certain nombre de processus de monitoring et d'alerting (logs, mail, bots de chats,
+              notifications) et de traçage (stacktrace, lineage de jobs en erreur).
+            - Les conséquences de l'absence de processus d'observabilités peuvent être catastrophiques : utilisation de
+              données périmées/erronées pour faire des décisions business ou entraîner des modèles qui à leur tour
+              produiront des prédictions peu fiables. À terme, ça peut complètement fragiliser la confiance des
+              dirigeants envers les équipes data.
+            - Voir la méthode DODD (Data Observability Driven Development), analogue du TDD (Test Driven Development),
+              même si en pratique je pense que c'est difficile à implémenter comme type de design.
 
-                - Réponse sur incident :
+        - Réponse sur incident :
+            - Utilisation des capacités d'automatisation et d'observabilité pour régler le plus rapidement les problèmes qui
+              peuvent survenir (système ou job qui crash, modèle de ML qui périme, schema qui change et met un reporting en
+              erreur) ainsi qu'identifier leurs causes.
+            - Sujet qui qui englobe aussi bien les techs et outils, que la communication libre et sans accusations, aussi bien
+              au sein de l'équipe DE qu'au travers de toute l'entreprise.
+            - Les DE doivent proactivement chercher les problèmes qui peuvent survenir afin que les utilisateurs n'aient pas à le
+              faire, et pour ne pas rompre leur confiance
+
+    - Data Architecture :
+        - Désigne l'état actuel et futur des systèmes de données mis à profit pour servir les besoins et stratégies en terme de
+          données de l'entreprise.
+        - Un DE doit d'abord comprendre les besoins business, les prérequis de ces besoins, et traduire ces prérequis en
+          solutions techniques afin de collecter et servir de la données. Il doit donc connaître les avantages et inconvénients
+          des techs, outils, patterns qu'il met en place ou utilise.
+        - Le DE n'est pas un Data Architect, mais il doit travailler en tandem avec, utiliser les design du Data Architect et
+          donner des feedbacks dessus.
+
+    - Orchestration :
+        - Processus de coordination de jobs afin que ceux-ci puissent tourner aussi vite et efficacement que possible selon une
+          une cadence automatisée. Les moteurs/frameworks d'orchestration intègrent des métadonnées sur les dépendances entre
+          tâches et entre jobs sous la forme de Graphes Dirigés Acycliques (DAG).
+        - Un système d'orchestration doit être constamment en ligne et disponibles, afin de faire tourner tous les jobs qui lui
+          sont intégrés, ainsi que faire remonter des erreurs lorsque des jobs crashent, des dépendances ne sont pas remplies,
+          par mail aux équipes DE ou via d'autres canaux.
+        - Principal moteur d'orchestration : Airflow
+        - D'autres moteurs intéressants voient le jour : Prefect, Dagster (essaient d'améliorer la portabilité et la testabilité
+          des DAGs pour gérer facilement les silotages d'environnement de dev et de prod etc.), Argo (construit autour de
+          Kubernetes), Metaflow (orienté ML).
+        - L'orchestration est un concept purement batch.
+
+    - Software Engineering :
+        - Le software engineering est toujours une compétence clef qu'un DE doit avoir. Avec le temps, le développement d'outils
+          et de framework tend à abstraire de plus en plus les détails bas-niveau de programmation dans les projets liés à la
+          donnée (e.g. omniprésence de SQL dans les environnements cloud). Néanmoins les capacités en software engineering
+          restent critiques dans le data engineering, par exemple dans ces quelques domaines du DEL :
+
+        - Core Data Processing Code :
+            - Code central qui gère le traitement des données, apparaît tout au long du DEL (ingestion, transformation, serving).
+              Le DE doit être compétent avec SQL, et des langages ou frameworks comme Spark ou Beam. Le DE doit aussi comprendre
+              et mettre en place des tests (unitaires, de régression, d'intégration, end-to-end, et smoke)
+
+        - Développement Open Source :
+            - Beaucoup de DE adoptent des frameworks open-source et peuvent alors y contribuer pour améliorer certains aspects.
+            - Il faut garder en tête de faire de la veille pour vérifier si il n'existe pas déjà un outil qui résout le problème
+              qu'un DE cherche à résoudre.
+            - Il faut aussi peser le coût de développement et d'ownership d'un outil.
+
+        - Streaming :
+            - Le streaming est un processus plus compliqué que le batch de façon inhérente, et l'écosystème autour est moins
+              mature; cela donne lieu à des problèmes de programmations plus complexes.
+            - Par exemple : les opérations classiques dont on a l'habitude comme les jointures doivent être repensées.
+            - Le DE doit pouvoir écrire du code pour appliquer des fonctions de fenêtrages sur des streams, afin de calculer par
+              exemple des statistiques en temps réel sur des streams (e.g. une moyenne sur les n derniers évènements).
+
+        - Infrastructure as Code (IaC) :
+            - Application du software engineering à la configuration et la gestion d'infrastructure. Les DE doivent savoir
+              utiliser les frameworks IaC afin de gérer leur infrastructure dans un environnement cloud, plutôt que de lancer ou
+              éteindre des instances ou installer du software manuellement.
+            - La notion d'IaC peut être appliqué à des containers (Docker) et à Kubernetes, avec des outils comme Helm.
+            - Ces pratiques sont une partie vitale du DevOps et permettent la répétabilité et le contrôle de version pour les
+              déploiements.
+
+        - Pipelines as Code :
+            -
