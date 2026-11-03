@@ -1,4 +1,5 @@
 Change Data Capture (CDC)
+Common Table Expression (CTE)
 Configuration as Code
 Continuous Integration/Continuous Delivery (CI/CD)
 Data Observability Driven Development (DODD)

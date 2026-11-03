@@ -479,10 +479,58 @@ Thèmes sous-jacent du DEL
         - Infrastructure as Code (IaC) :
             - Application du software engineering à la configuration et la gestion d'infrastructure. Les DE doivent savoir
               utiliser les frameworks IaC afin de gérer leur infrastructure dans un environnement cloud, plutôt que de lancer ou
-              éteindre des instances ou installer du software manuellement.
+              éteindre des instances ou installer du software manuellement. Ces frameworks sont le plus souvent dépendants d'une
+              plateforme cloud en particulier.
             - La notion d'IaC peut être appliqué à des containers (Docker) et à Kubernetes, avec des outils comme Helm.
             - Ces pratiques sont une partie vitale du DevOps et permettent la répétabilité et le contrôle de version pour les
               déploiements.
 
         - Pipelines as Code :
-            -
+            - Concept clef des systèmes d'orchestration, c'est le fait de déclarer des jobs, tâches, et dépendances entre elles
+              et eux, sous forme de code (le plus souvent Python).
+
+        - Résolution de problèmes tous-usages :
+            - Le DE rencontrera des cas limites ou des problèmes qui ne sont pas pris en compte par les outils, libs ou
+              frameworks qu'il utilise. Il doit être capable d'écrire du code custom (plus ou moins bas niveau) afin de pouvoir
+              prendre en compte ces cas.
+            - Il doit aussi être à l'aise avec la manipulation d'API, la récolte et transformation de données et formats, la
+              gestion d'exceptions, le design de fonctions, classes et libs, etc.
+
+
+Chapter 3 : Designing Good Data Architecture
+
+Qu'est-ce que la Data Architecture?
+
+    - Il faut d'abord définir l'Enterprise Architecture
+        - Contient plusieurs sous-ensembles : Business Architecture, Technical Architecture, Application Architecture, Data
+          Architecture
+        - L'Enterprise Architecture peut-être définie comme la conception de systèmes qui supportent le changement au sein d'une
+          entreprise, accompli en utilisant des décisions flexibles et réversibles, qui sont prise en faisant une évaluation
+          rigoureuse des compromis.
+        - Concepts clefs : décisions flexibles et réversibles, gestion des changements, évaluation des compromis (trade-offs)
+
+        - Les décisions flexibles et réversibles sont des décisions business, technologiques ou autre qui offrent facilement un
+          chemin retour. Elles sont indispensables dans un écosystème ou les pratiques, les technologies et les trends changent
+          rapidement. Adopter une culture de décisions réversibles permet aussi à une entreprise de ne pas se figer dans un
+          modèle spécifique qui pourrait devenir périmé, et de pouvoir s'adapter rapidement.
+        - La gestion des changements représente la façon concrète dont sont incarnées les décisions flexibles et réversibles :
+          comment mettre en oeuvre une décision? selon quels processus? Souvent, on aura tendance à séparer une décision en un
+          nombre de petites étapes, elles-mêmes réversible (e.g. l'adoption d'une nouvelle DB au sein d'un service).
+        - L'évaluation des compromis est assez explicite. Chaque décision concernant un système numérique vient avec son lot de
+          contraintes et possibles compromis, qu'ils soient physiques (e.g. latence, fiabilité, densité, concommation d'énergie)
+          ou non (e.g. caractéristiques de langages ou frameworks, complexité, budget).
+
+        - Point central de l'Enterprise Architecture : faire l'équilibre entre la flexibilité et les compromis.
+
+    - La Data Architecture est donc un sous-ensemble de l'Enterprise Architecture, contenant les mêmes concepts clefs, appliqué
+      à la donnée :
+        Conception de systèmes qui supportent les besoin en données changeants d'une entreprise, qui sont atteints par
+        l'application de décisions flexibles et réversibles après évaluation rigoureuse des compromis.
+    - Ça s'incarne dans le Data Engineering au niveau des systèmes et frameworks qui constituent les éléments clefs du DEL (dans
+      FDE, désigné comme Data Engineering Architecture, et utilisé de façon interchangeable avec Data Architecture).
+    - Autres aspects de la Data Architecture : Operational Architecture et Technical Architecture
+        - Operational Architecture : le quoi, qu'est-ce qui doit être fait? Décisions et objectifs business
+        - Technical Architecture : le comment ce doit être fait? Composants techniques, frameworks, design patterns
+
+
+La "Bonne" Data Architecture
