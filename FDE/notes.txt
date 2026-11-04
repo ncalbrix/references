@@ -481,13 +481,13 @@ Thèmes sous-jacent du DEL
               utiliser les frameworks IaC afin de gérer leur infrastructure dans un environnement cloud, plutôt que de lancer ou
               éteindre des instances ou installer du software manuellement. Ces frameworks sont le plus souvent dépendants d'une
               plateforme cloud en particulier.
-            - La notion d'IaC peut être appliqué à des containers (Docker) et à Kubernetes, avec des outils comme Helm.
+            - La notion d'IaC peut être appliquée à des containers (Docker) et à Kubernetes, avec des outils comme Helm.
             - Ces pratiques sont une partie vitale du DevOps et permettent la répétabilité et le contrôle de version pour les
               déploiements.
 
         - Pipelines as Code :
             - Concept clef des systèmes d'orchestration, c'est le fait de déclarer des jobs, tâches, et dépendances entre elles
-              et eux, sous forme de code (le plus souvent Python).
+              et eux, sous forme de code, le plus souvent Python (e.g. le code pour programmer un DAG Airflow).
 
         - Résolution de problèmes tous-usages :
             - Le DE rencontrera des cas limites ou des problèmes qui ne sont pas pris en compte par les outils, libs ou
@@ -528,9 +528,75 @@ Qu'est-ce que la Data Architecture?
         l'application de décisions flexibles et réversibles après évaluation rigoureuse des compromis.
     - Ça s'incarne dans le Data Engineering au niveau des systèmes et frameworks qui constituent les éléments clefs du DEL (dans
       FDE, désigné comme Data Engineering Architecture, et utilisé de façon interchangeable avec Data Architecture).
-    - Autres aspects de la Data Architecture : Operational Architecture et Technical Architecture
+    - Aspects internes de la Data Architecture : Operational Architecture et Technical Architecture
         - Operational Architecture : le quoi, qu'est-ce qui doit être fait? Décisions et objectifs business
         - Technical Architecture : le comment ce doit être fait? Composants techniques, frameworks, design patterns
 
 
 La "Bonne" Data Architecture
+
+    - Les concepts clefs derrière la "bonne" Data Architecture est qu'elle doit être au service du business, répondre aux besoins
+      business le mieux possible, et qu'elle doit être composée de blocs communs à plusieurs besoins business, flexibles et
+      facilement réustilisables.
+    - Par opposition, une mauvaise Data Architecture peut être monolithique, utiliser un outil par principe et non pas parce
+      qu'il répond efficacement à un besoin ou une contrainte, et a souvent ses composants fortement couplés.
+    - Une caractéristique importante d'une bonne Data Architecture est qu'elle est flexible, et qu'elle peut être changée à bas
+      coût (humain, financier).
+
+
+Principes d'une bonne Data Architecture
+
+    - Voir deux frameworks de Data Architecture :
+        - AWS Well-Architected Framework
+        - Google Cloud's Five Principles for Cloud-Native Architecture
+
+    - Dans FDE, les auteurs listent 9 principes fondamentaux de Data Architecture :
+        - Choisir les composants partagés avec soin
+        - Planifier en prenant en compte les échecs
+        - Architecturer pour scale
+        - L'Architecture est du leadership
+        - Toujours architecturer
+        - Construire des systèmes faiblement couplés
+        - Faire des décisions réversibles
+        - Prioriser la sécurité
+        - Adopter la FinOps
+
+    - Principe 1 : Choisir les composants partagés avec soin
+        - Un DE doit pouvoir choisir des composants et des pratiques partagées (entre les sytèmes et entre les persones) qui
+          puissent être utilisés partout au travers d'une entreprise, et qui facilitent la collaboration entre équipes.
+        - Ces composants peuvent être n'importe quoi qui peut être appliqué largement au sein de l'entreprise : systèmes d'object
+          storage, système de contrôle de version, d'observabilité, de monitoring, d'orchestration, moteurs de traitement.
+        - Les composants partagés doivent avoir des capacités de gestion des permissions et des accès.
+        - Pour choisir un composant partagé, il faut équilibrer entre l'utilité pour des projets individuels, faciliter la
+          collaboration et l'interopérabilité, tout en ne forçant pas les équipes à utiliser un outil tous-usages qui ne
+          répondrait pas bien à leurs besoins.
+
+    - Principe 2 : Planifier en prenant en compte les échecs
+        - Le hardware, aussi bon soit-il, viendra toujours à avoir des pannes. Il faut donc évaluer en avance les scénarios de
+          pannes selon différents critères :
+            - Disponibilité : le proportion de temps qu'un service ou composant passe dans un état opérationnel
+            - Fiabilité : probabilité qu'un système satisfasse les standards définis durant un intervalle de temps donné
+            - Objectif de Temps de Rétablissement (Recovery Time Objective - RTO) : temps maximum acceptable d'une panne pour un
+              système ou service donné, défini selon l'impact business de ladite panne (différence d'importance entre un système
+              interne et un système accessible par un client par ex.)
+            - Objectif d'État de Rétablissement : état acceptable d'un système ou service après un rétablissement (en data,
+              concerne principalement le volume maximal acceptable de données perdues)
+        - Le DE doit prendre en compte ces critères au moment de prendre un décision d'architecture
+
+    - Principe 3 : Architecturer pour scale
+        - La scalabilité va dans deux sens :
+            - Scale Up, c'est à dire ajouter des instances d'un système, par exemple des nodes dans un cluster Hadoop pour
+              entraîner un modèle sur une énorme quantité de données, ou ajouter des instances dans un système d'ingestion en
+              streaming pour accomoder un pic d'arrivée de données.
+            - Scale Down, c'est à dire retirer (automatiquement) des instances d'un système une fois un besoin intense passé,
+              ceci afin de réduire les coûts (notamment dans un contexte cloud) ou libérer des ressources matérielles.
+            - Un système élastique peut scale up et down dynamiquement en réponse à une charge de traitement, idéalement de façon
+              automatique.
+            - Certains systèmes peuvent scale to zero, c'est à dire s'éteindre complètement lorsqu'ils ne sont pas utilisés (e.g.
+              serverless functions, serverless online analytical processing (OLAP) DB).
+            - Il faut prendre en compte que le scaling apporte une couche de complexité non-négligeable, il peut être judicieux
+              selon le use case d'avoir une architecture fixe en terme de volume pour plus de simplicité (e.g. une DB avec un
+              serveur de secours pour une petite app web interne)
+
+    - Principe 4 : L'Architecture est du leadership
+        -

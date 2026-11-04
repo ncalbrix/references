@@ -5,8 +5,12 @@ Continuous Integration/Continuous Delivery (CI/CD)
 Data Observability Driven Development (DODD)
 Extract Transform Load (ETL)
 Identity and Access Management (IAM)
+Object Storage
 Patterns de modélisation de données : Kimball, Inmon, Data Vault
 Personally Identifiable Information (PII)
+Principles of Good Data Architecture : 
+    - AWS Well-Architected Framework
+    - Google Cloud's Five Principles for Cloud-Native Architecture
 Statistical Process Control (SPC)
 Test Driven Development (TDD)
 Testing :
