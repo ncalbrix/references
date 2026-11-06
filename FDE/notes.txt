@@ -590,13 +590,72 @@ Principes d'une bonne Data Architecture
               streaming pour accomoder un pic d'arrivée de données.
             - Scale Down, c'est à dire retirer (automatiquement) des instances d'un système une fois un besoin intense passé,
               ceci afin de réduire les coûts (notamment dans un contexte cloud) ou libérer des ressources matérielles.
-            - Un système élastique peut scale up et down dynamiquement en réponse à une charge de traitement, idéalement de façon
-              automatique.
-            - Certains systèmes peuvent scale to zero, c'est à dire s'éteindre complètement lorsqu'ils ne sont pas utilisés (e.g.
-              serverless functions, serverless online analytical processing (OLAP) DB).
-            - Il faut prendre en compte que le scaling apporte une couche de complexité non-négligeable, il peut être judicieux
-              selon le use case d'avoir une architecture fixe en terme de volume pour plus de simplicité (e.g. une DB avec un
-              serveur de secours pour une petite app web interne)
+        - Un système élastique peut scale up et down dynamiquement en réponse à une charge de traitement, idéalement de façon
+          automatique.
+        - Certains systèmes peuvent scale to zero, c'est à dire s'éteindre complètement lorsqu'ils ne sont pas utilisés (e.g.
+          serverless functions, serverless online analytical processing (OLAP) DB).
+        - Il faut prendre en compte que le scaling apporte une couche de complexité non-négligeable, il peut être judicieux
+          selon le use case d'avoir une architecture fixe en terme de volume pour plus de simplicité (e.g. une DB avec un
+          serveur de secours pour une petite app web interne)
 
     - Principe 4 : L'Architecture est du leadership
-        -
+        - Un bon Data Architect doit avoir à la fois de grandes capacités techniques et de grandes capacités de leadership. Il
+          doit pourvoir prendre des décisions techniques précises et informées, et déléguer le plus gros du travail de détail aux
+          DE.
+        - Le Data Architect ne doit pas occuper une posture de surplomb et être la seule partie prenante dans les décisions
+          d'architecture. À l'inverse, il doit consulter les équipes techniques et le business afin de prendre les décisions les
+          plus informées possibles et qui répondent le mieux aux besoins et contraintes de tous.
+        - Le Data Architect doit jouer un rôle de mentor dans les équipes data, faire de la formation et élever le niveau
+          technique afin de donner la possibilité à tous d'avoir une meilleure vision sur les meilleures décisions techniques à
+          prendre et la manière de répondre aux besoin techniques.
+        - En tant que DE, il faut le plus possible chercher le mentorat d'un Data Architect, ainsi que contribuer à et répandre
+          la culture data produite par les Data Architect.
+
+    - Principe 5 : Toujours architecturer
+        - Un Data Architect ne doit pas se contenter de maintenir l'architecture data actuelle d'une entreprise, mais à l'inverse
+          doit avoir une architecture cible en tête, toujours selon les besoins business et les changements dans le paysage tech,
+          à laquelle il doit faire tendre l'architecture actuelle à travers un plan séquencé de petites étapes.
+        - L'architecture cible changera vraisemblablement dans le temps avec les besoins business et avancées technologiques, et
+          le plan séquencé servira à prioriser les changements les plus urgents.
+
+    - Principe 6 : Construire des systèmes faiblement couplés
+        - Les systèmes faiblement couplés possède les caractéristiques suivantes :
+            - Un système est séparé en plusieurs petits composants
+            - Les composants communiquent entre eux via une interface/couche d'abstraction (API, messagin bus) qui cachent les
+              détails de fonctionnement de chaque composant (backend DB, classes, appels de méthodes, etc.)
+            - En conséquence, les changements internes d'un composant ne doivent pas avoir d'impact sur les autres composants :
+              les détails de programmation et de fonctionnement sont cachés derrière une API stable.
+            - Finalement, il n'y a donc pas de cycle de release global de tout le système : chaque composant est mis à jour
+              séparément au fur et à mesure que des changements et améliorations sont faits.
+        - Ces principes peuvent être appliqués à l'organisation elle-même pour obtenir des équipes faiblement couplées qui se
+          chargent individuellement d'un composant, indépendemment des autres équipes. Chaque équipe peut alors publier l'API
+          du composant dont elle se charge afin que les autres équipes l'utilisent, et chaque équipe peut faire des requêtes de
+          nouvelles features aux autres.
+
+    - Principe 7 : Faire des décisions réversibles
+        - Étant donné le rythme de changement de l'écosystème data, le Data Architect doit prendre le plus possible de décisions
+          réversibles, dans ses choix de pratiques, de frameworks, de technologies.
+        - Il doit aussi être préparé à mettre à jour ou adopter de meilleures techs ou pratiques à mesure que l'écosystème
+          évolue.
+
+    - Principe 8 : Prioriser la sécurité
+        - Le DE doit assumer la responsabilité de la sécurité des systèmes qu'il construit et maintient.
+        - Deux idées principales : la zero-trust security, et le shared responsibility security model
+
+        - Zero-trust Security :
+            - Type de modèle dans lequel l'entreprise définit un réseau avec des acteurs de confiance à l'intérieur et des
+              acteurs auxquels on ne fait aps confiance à l'extérieur (e.g. une salle de serveur sans accès depuis l'extérieur
+              mais qui donne accès à tout une fois à l'intérieur). Ce modèle est particulièrement vulnérable aux attaques depuis
+              l'intérieur (phishing, qui permet de trouver un accès intérieur à des services internes, etc).
+            - Dans un contexte cloud, la notion de frontière entre l'extérieur et l'intérieur devient d'autant plus floue.
+        - Shared Responsibility Model :
+            - Modèle s'appliquant aux environnement cloud, dans lequel le fournisseur cloud est resposable de la sécurité du
+              cloud en lui même, de son infra, etc., et l'utilisateur du cloud (l'entreprise) est responsable de la sécurité des
+              de son utilisation du cloud (données stockées, types d'accès, régulation en vigueur type RGPD, etc)
+
+        - Dans une entreprise, il y a souvent la présence d'une équipe de sécurité dédiée qui sera en charge de mettre en place
+          et faire appliquer les politiques de sécurité. Les environnements cloud déplacent ces responsabilités (au moins en
+          partie) vers les DE qui ne sont pas explicitement des ingé de sécurité. Le DE doit donc assumer ces responsabilités
+          implicites.
+
+    - Principe 9 : Adopter la FinOps
