@@ -587,7 +587,7 @@ Principes d'une bonne Data Architecture
         - La scalabilité va dans deux sens :
             - Scale Up, c'est à dire ajouter des instances d'un système, par exemple des nodes dans un cluster Hadoop pour
               entraîner un modèle sur une énorme quantité de données, ou ajouter des instances dans un système d'ingestion en
-              streaming pour accomoder un pic d'arrivée de données.
+              streaming pour accommoder un pic d'arrivée de données.
             - Scale Down, c'est à dire retirer (automatiquement) des instances d'un système une fois un besoin intense passé,
               ceci afin de réduire les coûts (notamment dans un contexte cloud) ou libérer des ressources matérielles.
         - Un système élastique peut scale up et down dynamiquement en réponse à une charge de traitement, idéalement de façon
@@ -621,7 +621,7 @@ Principes d'une bonne Data Architecture
     - Principe 6 : Construire des systèmes faiblement couplés
         - Les systèmes faiblement couplés possède les caractéristiques suivantes :
             - Un système est séparé en plusieurs petits composants
-            - Les composants communiquent entre eux via une interface/couche d'abstraction (API, messagin bus) qui cachent les
+            - Les composants communiquent entre eux via une interface/couche d'abstraction (API, messaging bus) qui cache les
               détails de fonctionnement de chaque composant (backend DB, classes, appels de méthodes, etc.)
             - En conséquence, les changements internes d'un composant ne doivent pas avoir d'impact sur les autres composants :
               les détails de programmation et de fonctionnement sont cachés derrière une API stable.
@@ -644,14 +644,14 @@ Principes d'une bonne Data Architecture
 
         - Zero-trust Security :
             - Type de modèle dans lequel l'entreprise définit un réseau avec des acteurs de confiance à l'intérieur et des
-              acteurs auxquels on ne fait aps confiance à l'extérieur (e.g. une salle de serveur sans accès depuis l'extérieur
+              acteurs auxquels on ne fait pas confiance à l'extérieur (e.g. une salle de serveur sans accès depuis l'extérieur
               mais qui donne accès à tout une fois à l'intérieur). Ce modèle est particulièrement vulnérable aux attaques depuis
               l'intérieur (phishing, qui permet de trouver un accès intérieur à des services internes, etc).
             - Dans un contexte cloud, la notion de frontière entre l'extérieur et l'intérieur devient d'autant plus floue.
         - Shared Responsibility Model :
             - Modèle s'appliquant aux environnement cloud, dans lequel le fournisseur cloud est resposable de la sécurité du
-              cloud en lui même, de son infra, etc., et l'utilisateur du cloud (l'entreprise) est responsable de la sécurité des
-              de son utilisation du cloud (données stockées, types d'accès, régulation en vigueur type RGPD, etc)
+              cloud en lui même, de son infra, etc., et l'utilisateur du cloud (l'entreprise) est responsable de la sécurité de
+              son utilisation du cloud (données stockées, types d'accès, régulation en vigueur type RGPD, etc)
 
         - Dans une entreprise, il y a souvent la présence d'une équipe de sécurité dédiée qui sera en charge de mettre en place
           et faire appliquer les politiques de sécurité. Les environnements cloud déplacent ces responsabilités (au moins en
@@ -659,3 +659,47 @@ Principes d'une bonne Data Architecture
           implicites.
 
     - Principe 9 : Adopter la FinOps
+        - FinOps : ensemble de pratiques à la croisée entre le DevOps et la Finance afin de gérer efficacement et dynamiquement
+          les dépenses en infra cloud dans le but de maximiser le profit tiré de ces infras.
+        - Dans un setting on-premise, les systèmes de données sont acquis ponctuellemtn en faisant une dépense de capital à
+          chaque fois
+            - Si on dépense trop : puissance de calcul non-utilisée, argent gâché
+            - Si on dépense pas assez : ralentissement des projets data, plus de temps alloué au contrôle de la charge sur
+              l'infra, besoins en upgrade plus réguliers et donc plus de temps alloué aux upgrades
+        - Dans un setting cloud, variations de modèle de paiement à l'utilisation (paiement pas query, paiement par temps de
+          calcul, paiement par capacité de calcul, etc). Approche plus efficace la plupart du temps, mais qui demande de gérer
+          les budgets et priorités efficacement
+        - La FinOps allie les questions budgétaires et techniques (e.g. quelle est la meilleure approche pour faire tourner
+          efficacement et à bas coût un job quotidien conséquent? quel mix d'instances Spot AWS utiliser (instances de
+          serveurs qui ne sont utilisées par personne, à très bas coût mais pas disponible de façon fiable))
+        - La FinOps transforme la gestion du budget et le monitoring des coûts d'un processus régulier en un processus continu,
+          ainsi une entreprise peut choisir de mettre en place des politiques de plafonds de dépenses indépassables, couplées
+          avec un mode d'échec acceptable pour l'utilisateur (ceci peut notamment permettre de se prémunir de surcoûts
+          considérables lors d'attaques DDoS)
+
+
+Principaux concepts d'architecture
+
+    - Domaines et Services :
+        - Domaine : Domaine thématique dans le monde réel pour lequel on créé une architecture
+        - Service : Ensemble de fonctionnalité dont le but est d'accomplir une tâche précise (e.g. un service de traitement de
+          commande ne va faire QUE traiter les commandes, pas gérer l'inventaire ou mettre à jour les profils client)
+        - Un domaine peut contenir plusieurs services (e.g. un domaine "vente" peut contenir les services "commandes", "devis" et
+          "produits")
+        - Plusieurs domaines peuvent partager des services (e.g. les domaines "vente" et "comptabilité" partagent un service
+          "devis" car les ventes génèrent des devis, et la comptabilité doit suivre les devis afin de s'assurer que les paiements
+          sont faits). Les équipes en question (e.g. vente et comptabilité) ont la responsabilité de leur propre domaine.
+        - Quand le DE conçoit un domaine, il doit partir du réel, voir ce que ce domaine représente dans le réel, et travailler
+          depuis ce constat.
+        - Il faut éviter de calquer l'achitecture d'un domaine sur un modèle général ou ce qui est fait dans une autre
+          entreprise, et plutôt travailler directement avec les utilisateurs et les parties prenantes afin de construire les
+          systèmes spécifiques qui les aideront dans leurs tâches. Éviter de construire un système sans consulter personne, et
+          que personne ne finira par utiliser.
+
+    - Systèmes distribués, scalabilité, concevoir pour l'échec
+        - En tant que DE, on s'intéresse à quatre caractéristiques des systèmes de données :
+            - Scalabilité : permet d'accroître (ou réduire) la capacité de traitement d'un système
+            - Élasticité : capacité d'un système à scale up ou down dynamiquement selon sa charge actuelle
+            - Disponibilité : pourcentage de temps pendant lequel un système ou service est dans un état utilisable
+            - Fiabilité : probabilité qu'un système réponde aux standards de fonctionnement définis, durant un intervalle de
+              temps spécifié 
