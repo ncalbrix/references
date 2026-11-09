@@ -661,17 +661,17 @@ Principes d'une bonne Data Architecture
     - Principe 9 : Adopter la FinOps
         - FinOps : ensemble de pratiques à la croisée entre le DevOps et la Finance afin de gérer efficacement et dynamiquement
           les dépenses en infra cloud dans le but de maximiser le profit tiré de ces infras.
-        - Dans un setting on-premise, les systèmes de données sont acquis ponctuellemtn en faisant une dépense de capital à
+        - Dans un setting on-premise, les systèmes de données sont acquis ponctuellement en faisant une dépense de capital à
           chaque fois
             - Si on dépense trop : puissance de calcul non-utilisée, argent gâché
             - Si on dépense pas assez : ralentissement des projets data, plus de temps alloué au contrôle de la charge sur
               l'infra, besoins en upgrade plus réguliers et donc plus de temps alloué aux upgrades
-        - Dans un setting cloud, variations de modèle de paiement à l'utilisation (paiement pas query, paiement par temps de
+        - Dans un setting cloud, variations de modèle de paiement à l'utilisation (paiement par query, paiement par temps de
           calcul, paiement par capacité de calcul, etc). Approche plus efficace la plupart du temps, mais qui demande de gérer
           les budgets et priorités efficacement
         - La FinOps allie les questions budgétaires et techniques (e.g. quelle est la meilleure approche pour faire tourner
           efficacement et à bas coût un job quotidien conséquent? quel mix d'instances Spot AWS utiliser (instances de
-          serveurs qui ne sont utilisées par personne, à très bas coût mais pas disponible de façon fiable))
+          serveurs qui ne sont utilisées par personne, à très bas coût mais pas disponible de façon fiable)?)
         - La FinOps transforme la gestion du budget et le monitoring des coûts d'un processus régulier en un processus continu,
           ainsi une entreprise peut choisir de mettre en place des politiques de plafonds de dépenses indépassables, couplées
           avec un mode d'échec acceptable pour l'utilisateur (ceci peut notamment permettre de se prémunir de surcoûts
@@ -702,4 +702,82 @@ Principaux concepts d'architecture
             - Élasticité : capacité d'un système à scale up ou down dynamiquement selon sa charge actuelle
             - Disponibilité : pourcentage de temps pendant lequel un système ou service est dans un état utilisable
             - Fiabilité : probabilité qu'un système réponde aux standards de fonctionnement définis, durant un intervalle de
-              temps spécifié 
+              temps spécifié
+        - Ces différentes caractéristiques sont liées :
+            - Un système qui ne répond pas aux standards de fonctionnement durant un intervalle de temps spécifié peut arrêter de
+              fonctionner, ainsi une faible fiabilité peut donner lieu à une faible disponibilité
+            - À l'inverse, une scalabilité dynamique permet de s'assurer de la performance d'un système sans intervention
+              manuelle, ainsi une bonne élasticité améliore la fiabilité d'un système
+        - La scalabilité peut s'incarner de différentes façons :
+            - Scaling vertical : ajouter de la puissance de calcul à une machine (plus de ram, de place de stockage, un meilleur
+              CPU). Méthode de scaling sensible aux pannes, besoin de backups, etc. Généralement, une machine seule, même si
+              très performante, ne peut pas fournir une haute disponibilité et fiabilité.
+            - Scaling horizontal : ajouter des machines, à travers un système distribué. En majorité du temps, ce genre de
+              système est organisé avec un noeud leader et des noeuds travailleurs.
+                - Le noeud leader est le point de contact pour l'instanciation, le suivi du progrès et de la complétions des
+                  charges de travail.
+                - Quand un job est lancé, le noeud leader s'occupe de distribuer les tâches entre les noeuds travailleurs, qui
+                  vont les compléter et retourner les résultats au noeud leader
+                - La majorité des systèmes distribués incluent aussi de la redondance : la donnée est répliquée entre les noeuds
+                  pour que, si une machine meurt, d'autres puissent reprendre la tâche là où elle a été arrêtée.
+        - Les systèmes distribués sont maintenant très répandus dans les technologies data, et abstraient les mécanismes internes
+          bas niveau. Il est néanmoins très recommandé pour un DE se renseigner sur les fonctionnements généraux de ces systèmes
+          pour améliorer la performances des pipelines.
+
+    - Couplage fort vs. couplage faible : Tiers, Monolithes, et Microservices
+        - À la conception d'une architecture, le DE choisit le niveau d'interdépendance entre les domaines, services et
+          ressources.
+        - Couplage fort : chaque domaine et service est dépendant de chaque autre domaine et service
+        - Couplage faible : chaque domaine et service est décentralisé et n'a pas de dépendance stricte avec aucun autre domaine
+          et service.
+        - Dans un scénario de couplage faible, il est facile pour des équipes décentralisées qui ne se parlent pas de concevoir
+          des systèmes avec des données inutilisables par les autres équipes, il faut donc mettre en place des standards communs,
+          assigner la propriété et la responsabilité des systèmes et données aux personnes en charge de leurs domaines et
+          services respectifs (un bon data management en somme).
+
+        - Tiers d'architecture
+            - Une architecture possède différentes couches (couche de données, d'appplication, de logique métier, de
+              présentation). Le DE doit savoir comment découpler ces couches, comment les structurer pour assurer une bonne
+              fiabilité et flexibilité.
+
+            - Architecture à un tiers
+                - L'application et la DB sont fortement couplées, et résident sur la même machine (e.g. un laptop, une VM sur le
+                  cloud). Si le serveur, la DB ou l'application plantent, toute l'architecture tombe.
+                - Un certain nombre de limitations : par exemple, si on essaie de faire de l'analytics sur une DB d'application
+                  de prod, celle-ci risque de devenir surchargée et va rendre l'application indisponible.
+                - À utiliser uniquement pour du prototypage
+
+            - Architecture multi-tiers
+                - Répond aux problèmes posés par une architecture à un tiers en découplant les différentes couches (données,
+                  application, logique métier, présentation, etc). Ces couches sont organisées de façon hiérarchiques : les
+                  couches les plus hautes sont dépendantes des couches les plus basses, qui elles ne dépandent pas nécessairement
+                  des couches les plus hautes.
+                - La notion importante est de séparer les données, l'application, et la présentation.
+                - Type d'achitecture multi-tiers répandu : l'architecture en 3 tiers, très utilisée dans les applications
+                  client - serveur. Elle possède donc trois couche : la couche de données tout en bas, la couche d'application au
+                  dessus, puis la couche de présentation encore au dessus. Le choix de la tech pour chaque couche peut donc être
+                  fait indépendamment des autres
+
+            - Dans une architecture multi-tiers, le DE doit considérer à la fois comment séparer les différentes couches, et
+              comment sont partagées les ressources au sein de chaque couche lorsqu'on travaille dans un environnement distribué.
+              Est-ce qu'on veut éviter les conflits pour accéder à des ressources entre les noeuds? On peut alors mettre en place
+              une Shared-Nothing Architecture, dans laquelle chaque noeud se charge d'une requête, et ne partage pas la ram, la
+              mémoire disque ou le CPU avec les autres noeuds.
+              Est-ce qu'on veut que chaque noeud puisse gérer plusieurs requête? On court le risque de conflit de ressources
+              entre les noeuds. On peut se dire que la ram et mémoire disque sera accessible par tous les noeuds : c'est une
+              Shared Disk Architecture, répandue pour se prémunir des plantages de noeuds individuels.
+
+        - Monolithes
+            - Notion générale : inclure le plus de choses possibles au même endroit
+            - Version extrême : une seule codebase, qui tourne sur une seule machine, et qui fournit à la fois la logique
+              d'application et l'interface utilisateur
+            - Deux axes de couplage :
+                - Couplage technologique : se réfère aux tiers de l'architecture, sont-ils séparés ou non
+                - Couplage de domaines : est-ce que plusieurs domaines sont regroupés ou non
+            - On peut avoir par exemple un monolithe architecturé en plusieurs tiers découplés mais qui mélange plusieurs
+              domaines, ou un monolithe avec une architecture à un tiers réduit à un seul domaine.
+            - Le fort couplage d'un monolithe sous-entend un manque de modularité de ses composants. Cela rend la mise à jour ou
+              l'amélioration d'un composant d'un monolithe particulièrement ardue, et celle-ci pourra provoquer des conséquences
+              innatendues dans d'autres composants.
+            - Un monolithe se forme souvent lorsqu'une équipe data ou software ignore la complexité grandissante d'un système, et
+              y ajoute du code sans considération architecturale.
