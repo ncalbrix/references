@@ -781,3 +781,87 @@ Principaux concepts d'architecture
               innatendues dans d'autres composants.
             - Un monolithe se forme souvent lorsqu'une équipe data ou software ignore la complexité grandissante d'un système, et
               y ajoute du code sans considération architecturale.
+
+        - Microservices
+            - À l'opposé complet d'un monolithe. Architecture en microservices : ensemble de services séparés, décentralisés,
+              faiblement couplés. Chaque service remplit une fonction spécifique. Si un service est en échec, cela n'a pas
+              d'impact sur le fonctionnement des autres.
+            - Question centrale : comment transformer un monolithe en microservices? Dépend de la complexité du monolithe et du
+              niveau d'effort requis d'en extraire des services. Il est possible que le monolithe ne puisse pas être séparé du
+              tout, dans ce cas il est plus simple de créer une architecture en microservices parallèle, de zéro.
+              Question tech autant que question organisationnelle : il faut l'aval des parties prenantes du monolithe pour
+              commencer à le séparer en services.
+
+        - Considérations sur la Data Architecture
+            - Les architectures de données fortement couplées sont toujours assez communes, ceci est dû à la nature des techs de
+              données existante et la façon dont elles s'intègrent les unes aux autres.
+            - Exemple : des pipelines qui ingèrent des données depuis différentes sources et qui les intègrent dans un seul Data
+              Warehouse : le Data Warehouse est monolithique. Un changement qui peut-être fait serait d'avoir plusieurs Data
+              Warehouses pour différentes domaines (ventes, inventaire, produit). Cela peut néanmoins ajouter une couche de
+              complexité non négligeable au niveau de l'analytics, qui se base souvent sur plusieurs domaines en même temps.
+            - Le DE doit rester flexible : ne pas être dogmatique sur l'usage de microservices, mais prôner le plus possible du
+              couplage faible, prendre en compte les limitations des techs data, et faire des choix de techs facilement
+              réversibles qui permettent de la modularité.
+            - Il faut garder à l'esprit le problème organisationnel du couplage des domaines.
+              Est-ce qu'on utilise une approche centralisée : une équipe collecte la donnée pour tous les domaines et s'occupe de
+              la rendre utilisable par toute l'entreprise? Approche classique du Data Warehousing, comme à Numberly, à ceci près
+              que différents DE avaient la resposabilité de différents clients
+              À l'inverse, est-ce qu'on sépare la resposabilité de l'ingestion et de la préparation des données entre chaque
+              équipe selon leur domaine? (Pattern du Data Mesh)
+            - Les monolithes ne sont pas mauvais pas essence, ils peuvent être pratiques pour avoir rapidement une solution
+              fonctionnelle, néanmoins il faut garder en tête un moyen de le séparer en services plus faiblement couplés à
+              l'avenir.
+
+    - Accès utilisateurs : Single tenant vs. Multinenant
+        - Un DE doit souvent prendre des décisions sur le partage ou non de systèmes ou données entre plusieurs équipes,
+          organisations, ou clients.
+        - Les services de calcul cloud sont multitenant par nature, mais l'usage de VM permet un degré de séparation entre les
+          utilisateurs. L'Object Storage est multitenant, mais le fournisseur cloud garantit la sécurité et l'isolation tant que
+          le client configure correctement les accès.
+        - À plus basse échelle, le DE doit prendre des décisions sur la multitenancy, par exemple : dans une grosse entreprise,
+          est-ce que plusieurs départements partagent le même data warehouse? Est-ce qu'une table contient des données de
+          plusieurs clients? (penser à la normalisation chez Numberly, notamment pour les données de tag)
+        - Deux facteurs principaux dans la multitenancy : performances et sécurité.
+            - Performances : est-ce que l'usage intensif d'un tenant causera des dégradations de performances pour un autre
+              tenant?
+            - Sécurité : les données entre tenant sont-elles bien isolées? Exemple : si on a des données de plusieurs clients
+              dans une seule table, on peut offrir un accès via une vue qui isole les données par client. Il faut comprendre
+              clairement le fonctionnement de la tech utilisée pour s'assurer de la sécurité de nos actions.
+
+    - Architecture Event-Driven
+        - Type d'architecture centrée sur le concept d'event : une action qui se produit, qui change l'état de quelque chose
+          (e.g. un nouveau client est acquis, un client fait une nouvelle commande, ou met à jour une de ses commandes, etc)
+        - Un workflow event-driven englobe la capacité de créer, mettre à jour, et propager de façon asynchrone les events entre
+          différentes partie du DEL.
+        - Workflow séparé en trois domaines principaux : production d'event, routing d'event, et consommation d'event. Il faut
+          que le producteur, le router et le consommateur de l'event soit découplés (le plus possible).
+        - Avantage de ce type d'architecture : un l'état d'un event peut être distribué à plusieurs service en même temps
+          (toujours de façon asynchrone). Utile pour se prémunir d'un service qui plante ou d'un noeud mis en échec dans un
+          système distribué, ainsi que pour que plusieurs consommateurs ou services aient accès au même event.
+
+    - Projets Brownfield vs. projets Greenfield
+        - Projets Brownfield :
+            - Impliquent de refactorer et réorganiser une architecture existante. Contraintes nées des choix passés et présents
+              (en terme de tech et d'organisation).
+            - Projets qui requièrent une compréhension profonde de l'architecture existante, et des interactions entre des
+              vieilles ou moins vieilles techs.
+            - Il faut le plus possible connaître le contexte dans lequel les décisions passées ont été prises afin de les
+              comprendre, diagnostiquer les problèmes, identifier les opportunités et les possibles écueils.
+            - Il faudra déprécier les anciennes techs ou architectures à un moment, plusieurs approches pour cela :
+                - Changement complet tout à la fois : donne souvent lieux à des décisions irréversibles et coûteuses, à éviter
+                - Strangler Fig Pattern : des nouveaux systèmes sont conçus progressivement remplaçants un à un les composants de
+                  l'ancienne architecture. Permet de prendre des décisions réversibles et de jauger plus précisemment l'impact de
+                  la dépréciation de systèmes dépendants les uns des autres.
+            - La dépréciation de composants ou systèmes n'est pas toujours possible (e.g. une équipe a toujours besoin critique
+              d'un vieux système). Quand la dépréciation est possible, il faut faire de la politique et de la com pour montrer
+              l'avantage des nouveaux systèmes.
+
+        - Projets Greenfield
+            - Projets où l'on commence de zéro, ou l'on conçoit une architecture du début.
+            - Souvent plus simples que les projets Brownfield
+            - Il faut faire attention à ne pas tomber dans le piège d'adopter des techs uniquement parce qu'elles sont cools,
+              alors qu'elles ne seront peut-être pas forcément utiles ou alors trop complexes pour les besoins métier.
+            - Toujours prioriser les besoins métier.
+
+
+Exemples et Types de Data Architecture
