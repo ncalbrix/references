@@ -792,12 +792,12 @@ Principaux concepts d'architecture
               Question tech autant que question organisationnelle : il faut l'aval des parties prenantes du monolithe pour
               commencer à le séparer en services.
 
-        - Considérations sur la Data Architecture
+        - Considérations de Data Architecture
             - Les architectures de données fortement couplées sont toujours assez communes, ceci est dû à la nature des techs de
               données existante et la façon dont elles s'intègrent les unes aux autres.
             - Exemple : des pipelines qui ingèrent des données depuis différentes sources et qui les intègrent dans un seul Data
               Warehouse : le Data Warehouse est monolithique. Un changement qui peut-être fait serait d'avoir plusieurs Data
-              Warehouses pour différentes domaines (ventes, inventaire, produit). Cela peut néanmoins ajouter une couche de
+              Warehouses pour différents domaines (ventes, inventaire, produit). Cela peut néanmoins ajouter une couche de
               complexité non négligeable au niveau de l'analytics, qui se base souvent sur plusieurs domaines en même temps.
             - Le DE doit rester flexible : ne pas être dogmatique sur l'usage de microservices, mais prôner le plus possible du
               couplage faible, prendre en compte les limitations des techs data, et faire des choix de techs facilement
@@ -835,7 +835,7 @@ Principaux concepts d'architecture
           différentes partie du DEL.
         - Workflow séparé en trois domaines principaux : production d'event, routing d'event, et consommation d'event. Il faut
           que le producteur, le router et le consommateur de l'event soit découplés (le plus possible).
-        - Avantage de ce type d'architecture : un l'état d'un event peut être distribué à plusieurs service en même temps
+        - Avantage de ce type d'architecture : l'état d'un event peut être distribué à plusieurs service en même temps
           (toujours de façon asynchrone). Utile pour se prémunir d'un service qui plante ou d'un noeud mis en échec dans un
           système distribué, ainsi que pour que plusieurs consommateurs ou services aient accès au même event.
 
@@ -865,3 +865,56 @@ Principaux concepts d'architecture
 
 
 Exemples et Types de Data Architecture
+
+    - Le Data Warehouse :
+        - Plateforme centrale de donnée utilisée pour l'analytics, le reporting, l'entraînement ML, etc.
+        - Contient des données hautement formatées et structurées.
+        - Parmi les types d'architecture data les plus vieux et les mieux établis.
+        - Dans le passé, réservé à des grosses entreprises avec beaucoup de moyens (gros coûts techniques et humains pour la mise
+          en place et la maintenance). Avec les services cloud, c'est devenu un type d'architecture très accessible : les
+          considérations d'infrastructure sont déléguées aux fournisseurs cloud.
+        - 2 composantes d'achitecture de Data Warehouse notables : architecture organisationnelle et architecture techniques
+
+        - Architecture Organisationnelle de Data Warehouse :
+            - Organise les données associées à certains process et structures et des équipes métiers
+            - 2 grandes caractéristiques :
+
+            - Séparer le traitement de l'analytics des DB de production
+                - Indispensable pour réduire la charge des DB de prod et améliorer la performance de l'analytics
+
+            - Centraliser et organiser la donnée
+                - Typiquement, un Data Warehouse tire des données d'applications en utilisant de l'ETL.
+                - Extract : tirer des données de systèmes sources
+                - Transform : nettoyer, formater, normaliser les données et appliquer des règles métier
+                - Load : écrire les données transformer dans le système de DB du Data Warehouse (souvent dans plusieurs Data
+                  Marts, qui séparent les données selon différents business, clients, départements, etc)
+
+        - Architecture Technique de Data Warehouse :
+            - Systèmes MPP (Massively Parallel Processing, architecture de système distribué où les processeur ou nodes sont
+              séparés et ont leur propre capacité de calcul et mémoire séparées des autres) sont devenus populaires dans les 80's
+            - Optimisés pour la lecture en parallèle d'énormes quantités de données et permettre des agrégations et calculs
+              statistiques très performants.
+
+        - Variation de l'ETL : l'ELT
+            - La donnée est lue et écrite telle quelle (ou presque) dans une zone de staging du Data Warehouse. L'étape de
+              transformation est retardée et déléguée directement au Data Warehouse pour profiter de ses capacités de calcul
+              distribué massives. Le Data Warehouse lui-même se chargera donc de lire la donnée de sa zone de staging, appliquer
+              par batches des transformations, normalisations, etc, puis écrire la donnée transformée dans sa zone de destination
+              en lui-même.
+              Chez Numberly, Hive était le Data Warehouse.
+            - L'ELT peut aussi être utilisé dans un contexte de streaming, par ex si des events sont streamés au sein d'un
+              processus de CDC (Change Data Capture).
+
+    - Le Data Warehouse Cloud :
+        - Évolution significative par rapport à sa contrepartie On-Premise, et donc changement dans son architecture
+          organisationnelle
+        - Flexibilité : pas besoin de prévoir d'un coup le nombre de machines à avoir dans son cluster, on peut en ajouter au fur
+          et à mesure. Possibilité d'ajouter et de supprimer des clusters selon des use cases spécifiques/des pics de charge de
+          calcul.
+        - Possibilité de stocker et traiter de grands volumes de texte brut par ligne en DB, ainsi que des documents JSON
+          complexes.
+        - Au fur et à mesure des évolutions, les Data Warehouse Cloud s'éloignent du concept de simple Data Warehouse pour
+          devenir des plateformes de données plus vastes.
+        - Acteur principaux : Amazon Redshift, Google BigQuery, Snowflake
+
+    - Les Data Marts :
