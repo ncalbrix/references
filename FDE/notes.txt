@@ -876,7 +876,7 @@ Exemples et Types de Data Architecture
         - 2 composantes d'achitecture de Data Warehouse notables : architecture organisationnelle et architecture techniques
 
         - Architecture Organisationnelle de Data Warehouse :
-            - Organise les données associées à certains process et structures et des équipes métiers
+            - Organise les données associées à certains process et structures des équipes métiers
             - 2 grandes caractéristiques :
 
             - Séparer le traitement de l'analytics des DB de production
@@ -918,3 +918,77 @@ Exemples et Types de Data Architecture
         - Acteur principaux : Amazon Redshift, Google BigQuery, Snowflake
 
     - Les Data Marts :
+        - Sous-ensemble d'un Data Warehouse concentré sur une organisation/département/client, à visée d'analytics.
+        - Chaque organisation/département/client a son propre Data Mart, avec des données spécifiques aux besoins de cette
+          organisation.
+        - Les Data Marts peuvent proposer des données qui ont subi une étape supplémentaire de transformation/jointure/agrégation
+          afin d'être directement utilisables pour des reportings ou de l'analytics
+        - Chez Numberly, les Data Marts étaient typiquement incarnées par les bases clients non-normalisées, ouvertes en écriture
+
+    - Le Data Lake :
+        - Architecture, le plus souvent cloud, permettant de stocker de grands volumes de données structurées et non-structurées
+          grâce à de l'object storage, couplée à des capacités de calcul à la demande et un vaste choix de techs pour le
+          requêtage et le calcul (MapReduce, Spark, Ray, Presto, Hive, etc)
+        - Le Data Lake est venu avec son lot de promesse et de hype dans les années 2010, mais, à part pour certains cas réussis
+          dans de grosses entreprises tech (e.g. Facebook, Netflix), il est souvent devenu source de grandes complexités, de
+          frustrations, de mauvaises pratiques data et de données écrites et jamais utilisées (voir Data Swamp)
+        - À l'origine, les Data Lake était en write-only, ce qui rendait particulièrement difficile la mise à jour de données, la
+          suppression ciblée etc (passait la plupart du temps par l'écriture de nouvelles tables)
+
+    - Convergence, Data Lakes nouvelle génération, et Data Platform
+        - Différentes évolutions nées notamment des défauts du Data Lake
+        - Databricks propose le Data Lakehouse : contrôle, gestion de données et structures de données du Data Warehouse, couplés
+          avec de l'object storage supportant une multitude de moteurs de requêtes. Notamment, support des transactions ACID.
+        - L'architecture des Data Warehouse cloud s'est rapprochée de l'archi de Data Lake, avec notamment la séparation du
+          stockage et des capacités de calcul, le stockage de données non-structurées et semi-structurées, et l'intégration de
+          techs comme Spark ou Beam.
+        - Les fournisseurs cloud proposent désormais des Data Platform qui combinent les capacités du Data Warehouse et du Data
+          Lake (AWS, Azure, Google Cloud, Snowflake, Databricks). Ils offrent un ensemble d'outils intégrés pour travailler avec
+          tout type de données, depuis les données non-structurées jusqu'au DB relationnelles.
+          Les DE devront choisir un fournisseur selon l'écosystème du fournisseur en question, le degré d'ouverture du software, etc.
+
+    - La Modern Data Stack
+        - Type d'architecture d'analytics mettant en avant l'utilisation de différents composants cloud standards et simple
+          d'utilisation et d'installation pour créer un ensemble modulaire et cost-effective.
+        - Types de composants : pipelines de données, stockage, gestion de données, monitoring, dataviz, exploration.
+        - Les outils évoluent rapidement mais l'idée centrale reste la même : réduction de complexité et modularité
+        - S'intègre bien avec la notion de Data Platform
+        - Les résultats attendus sont notamment le self-service data (pipelines et analytics) et la gestion des données agile
+
+    - Lambda Architecture
+        - Type d'architecture né du besoin d'unifier une archi batch avec une archi streaming.
+        - Plusieurs systèmes fonctionnant indépendamment les uns des autres : batch, streaming, et serving
+        - Le système source envoie des données à deux destination : une streaming et une batch
+        - Le système de streaming doit servir la donnée le plus rapidement possible dans une couche "speed", souvent une DB NoSQL
+        - Dans la couche batch, les données sont transformées et stockées dans un système type Data Warehouse
+        - La couche de serving unifie les deux couches précédentes en agrégeant les résultats des queries de ces deux couches
+        - Défaut majeur : complexité. Plusieurs systèmes avec plusieurs codebases, difficile à maintenir, code et données
+          difficile à réconcilier
+        - Type d'architecture de moins en moins utilisé et peu recommandé
+
+    - Kappa Architecture :
+        - Type d'architecture né en réponse aux défauts de la Lambda Architecture
+        - Basé sur le fait de supprimer la couche batch de la Lambda Architecture, et de traiter toutes les données (ingestion,
+          stockage, serving) via une plateforme de traitement de stream type Kafka.
+        - Les données peuvent être ainsi lues en temps réel via un stream, et peuvent être traitées en batch en rejouant une
+          grande portion d'un stream.
+        - La Kappa Architecture n'a pas été adoptée à grande échelle, car mettre en place une plateforme complète de traitement
+          de streams reste complexe. De plus, dans la pratique, la Kappa Architecture est complexe et chère. Le batch "natif"
+          reste une option bien plus simple et cost-effective pour traiter de gros jeux de données historiques.
+
+    - Le modèle Dataflow et le Batch et Streaming Unifié
+        - Les architectures Lambda et Kappa avaient pour but d'unifier le batch et le streaming, mais n'y sont pas arrivé. Elles
+          ont néanmoins servi d'inspiration à des initiatives futures.
+        - Concept central : unifier le code pour gérer les traitements batch et streaming.
+        - Dans ce but, Google a développé le modèle Dataflow et le framework Apache Beam qui l'implémente.
+        - Modèle Dataflow :
+            - Toute donnée est un event
+            - Les agrégations sont faites sur différents types de fenêtres
+            - Les streams d'event en temps réel sont des données non-bornées
+            - Les batches sont des streams de données bornées, les bornes fournissent ainsi une fenêtre
+            - Différents types de fenêtres pour les agrégations en temps réel (fenêtre glissantes, fenêtres fixes (type group
+              by))
+            - Le traitement temps réel et par batch se fait dans le même système avec du code quasiment identique
+        - La philosophie de considérer le batch comme cas particulier de streaming est de plus en plus adoptée
+
+    - Architecture pour l'IoT
