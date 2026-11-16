@@ -873,7 +873,7 @@ Exemples et Types de Data Architecture
         - Dans le passé, réservé à des grosses entreprises avec beaucoup de moyens (gros coûts techniques et humains pour la mise
           en place et la maintenance). Avec les services cloud, c'est devenu un type d'architecture très accessible : les
           considérations d'infrastructure sont déléguées aux fournisseurs cloud.
-        - 2 composantes d'achitecture de Data Warehouse notables : architecture organisationnelle et architecture techniques
+        - 2 composantes d'achitecture notables du Data Warehouse : architecture organisationnelle et architecture technique
 
         - Architecture Organisationnelle de Data Warehouse :
             - Organise les données associées à certains process et structures des équipes métiers
@@ -886,7 +886,7 @@ Exemples et Types de Data Architecture
                 - Typiquement, un Data Warehouse tire des données d'applications en utilisant de l'ETL.
                 - Extract : tirer des données de systèmes sources
                 - Transform : nettoyer, formater, normaliser les données et appliquer des règles métier
-                - Load : écrire les données transformer dans le système de DB du Data Warehouse (souvent dans plusieurs Data
+                - Load : écrire les données transformées dans le système de DB du Data Warehouse (souvent dans plusieurs Data
                   Marts, qui séparent les données selon différents business, clients, départements, etc)
 
         - Architecture Technique de Data Warehouse :
@@ -928,7 +928,7 @@ Exemples et Types de Data Architecture
     - Le Data Lake :
         - Architecture, le plus souvent cloud, permettant de stocker de grands volumes de données structurées et non-structurées
           grâce à de l'object storage, couplée à des capacités de calcul à la demande et un vaste choix de techs pour le
-          requêtage et le calcul (MapReduce, Spark, Ray, Presto, Hive, etc)
+          requêtage et le calcul (MapReduce, Spark, Ray, Presto, Hive, etc). Séparation claire entre le stockage et le calcul.
         - Le Data Lake est venu avec son lot de promesse et de hype dans les années 2010, mais, à part pour certains cas réussis
           dans de grosses entreprises tech (e.g. Facebook, Netflix), il est souvent devenu source de grandes complexités, de
           frustrations, de mauvaises pratiques data et de données écrites et jamais utilisées (voir Data Swamp)
@@ -992,3 +992,94 @@ Exemples et Types de Data Architecture
         - La philosophie de considérer le batch comme cas particulier de streaming est de plus en plus adoptée
 
     - Architecture pour l'IoT
+        - Internet of Things (IoT) : collection distribuée de d'appareils/systèmes (des things) : ordinateurs, capteurs,
+          appareils mobiles, appareils de domotique, etc. La donnée IoT n'est pas générée par un input humain (formulaire saisi,
+          etc) mais par les appareils qui collectent de la donnée depuis leur entourage direct, périodiquement ou
+          continuellement, et la transmettent à une destination.
+
+        - Appareils (ou Things) :
+            - Hardware physique connecté à internet, observant son environnement, qui collecte et transmet de la donnée à une
+              destination en aval. Exemples d'utilisation : caméra de sonnette de porte, smartwatch, thermostat automatique.
+            - Chaque appareil permettant de collecter des données à partir de son environnement peut être un appareil IoT.
+            - Les appareils IoT peuvent en plus avoir des capacités de calcul pour traiter la donnée qu'ils collectent, ou
+              appliquer du ML dessus (Edge Computing, Edge Machine Learning)
+            - Le DE n'a pas besoin de connaître les détails de fonctionnement des appareils IoT, mais doit comprendre ce qu'ils
+              font, la donnée qu'ils collectent, la présence ou non de edge computing ou ML, et la régularité du flux de données
+              envoyé. Il doit aussi comprendre les conséquences d'une panne d'appareil ou de connexion internet, et les facteurs
+              externes pouvant affecter la collecte de données (ce sont des systèmes sources, finalement).
+
+        - S'interfacer avec des appareils :
+            - Gateway IoT :
+                - Plateforme centrale sur laquelles les appareils se connectent et qui permet de router de façon sécurisée les
+                  appareils à leur destination sur internet.
+                - Permet aux appareils de se connecter en utilisant très peu d'énergie.
+                - Gère la connexion internet jusqu'à la destination des données (agit comme un routeur)
+                - Typiquement, un essaim d'appareils IoT utilisera plusieurs Gateways IoT, une à chaque endroit physiques où se
+                  trouvent des appareils
+
+            - Ingestion :
+                - L'ingestion des données commence par la connexion à une Gateway IoT, à partir de laquelle les mesures et events
+                  peuvent être envoyés dans une architecture d'ingestion d'events (tel un flux en streaming, dans un outil type
+                  Kafka)
+                - L'ingestion peut aussi se faire en batch, si la gateway fait de la rétention de données pour uploader
+                  uniquement périodiquement, ou alors dans le cas où la gateway n'aurait pas une connexion internet stable
+                  (localisations reculées etc)
+                - Il faut donc prendre en compte la variété des systèmes IoT, de leurs fonctionements, et de leurs complications
+                  nées notamment de leur environnement
+
+            - Stockage :
+                - Les besoins de stockage dépendent des exigences en termes de latence du système IoT
+                - Exemples :
+                    - Capteurs éloignés collectant des données scientifiques pour une analyse postérieure -> un object storage
+                      batch fonctionne bien
+                    - Système de surveillance et d'automatisation de maison nécessitant une réponse en quasi temps réel -> il
+                      sera plus propice d'utiliser une message queue ou une DB de séries temporelles.
+
+            - Serving :
+                - Grande diversité de patterns
+                - Exemples :
+                    - Données scientifiques en batch : données analysées en utilisant un Data Warehouse Cloud, puis servies dans
+                      un reporting
+                    - Données de surveillance de maison : analysées en quasi temps réel en utilisant un moteur de traitement de
+                      streams ou des requêtes sur une DB de séries temporelles, pour déceler la présence d'évènements critiques
+                      (feu, panne électrique, intrusion) et alerter automatiquement les proprios ou des autorités compétentes.
+                      De plus, une analyse batch peut être produite régulièrement (e.g. reporting mensuel sur l'état de la
+                      maison)
+                - Un pattern significatif se rapproche du Reverse ETL : des capteurs sur une machine industrielle collectent des
+                  données de fonctionnement de la machine, qui sont transmises puis analysées pour optimiser le fonctionnement
+                  de la machine. De la donnée est alors renvoyée vers la machine pour régler son fonctionnement et l'optimiser.
+
+    - Data Mesh :
+        - Type d'architecture répondant aux problèmes posés par les plateformes monolithiques (e.g. data warehouse ou data lake
+          centralisé) en appliquant les concepts du Domain Driven Design à la Data Architecture.
+        - Quatre composants principaux :
+            - Propriété et architecture de donnée décentralisée, orientée domaine
+            - La donnée comme produit
+            - Plateforme de données self-service
+            - Gouvernance informatique fédérée
+        - Dans ce type d'architecture, l'organisation est séparée en équipes réparties par domaine, cross-fonctionnelles (i.e.
+          incluant des employés de différentes spécialités : métier, tech, data, etc), qui possèdent chacune leurs apps et les
+          données qu'elles génères. Ces équipes communiquent de la donnée via des API. La façon dont les données sont collectées
+          et stockées est décrite par une politique globale décidée par une équipe fédérée composée de représentant de plusieurs
+          (ou tous) les domaines. Enfin, les données de tous les domaines sont mises à disposition via une plateforme
+          self-service.
+        - En pratique, c'est un type d'architecture qui a l'air compliqué à mettre en place, et qui convient sans doute mieux à
+          des structures d'une certaine taille
+
+    - Autres types d'architecture :
+        - Il existe un certain nombre d'autres types d'architectures, le DE doit rester à l'affût des évolutions du domaine, être
+          ouvert d'esprit et pas attaché émotionnellement à un type d'archi ou d'approche.
+
+
+Qui est impliqué dans la Data Architecture ?
+
+    - Idéalement, un DE travaillera aux côtés d'un Data Architect. Si l'entreprise est petite ou à faible niveau de maturité
+      data, le DE pourra devoir jouer lui-même le rôle de Data Architect.
+    - Étant donné que la Data Architecture est un sujet sous-jacent du DEL, le DE doit connaître les différents types de data
+      architecture et les tenants et aboutissants d'une "bonne" architecture.
+    - Il est crucial de connaître les compromis et avantages/inconvénients, ainsi que savoir les évaluer dans les cas concrets,
+      des différents type d'archi (e.g. Data Warehouse vs. Data Lake? GCP vs. Snowflake? Quand utiliser un framework de Batch et
+      Streaming unifié?)
+
+
+Chapter 4 : Choosing Technologies Across the Data Engineering Lifecycle

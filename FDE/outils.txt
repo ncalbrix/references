@@ -10,6 +10,8 @@ dbt : ochestrateur pour requêtes SQL
 
 Docker :
 
+DuckDB :
+
 Flink : framework et moteur de calcul distribué sur des streams de données
 
 Helm :

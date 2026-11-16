@@ -1,4 +1,5 @@
 Change Data Capture (CDC)
+Column Oriented DBMS
 Common Table Expression (CTE)
 Configuration as Code
 Consistency Models :
@@ -7,9 +8,13 @@ Consistency Models :
     - Eventual Consistency
 Continuous Integration/Continuous Delivery (CI/CD)
 Data Observability Driven Development (DODD)
+Domain Driven Design
+Edge Computing
+Edge Machine Learning
 Extract Transform Load (ETL)
 Identity and Access Management (IAM)
 Massively Parallel Processing (MPP)
+Modern Data Stack
 Object Storage
 Patterns de modélisation de données : Kimball, Inmon, Data Vault
 Personally Identifiable Information (PII)
