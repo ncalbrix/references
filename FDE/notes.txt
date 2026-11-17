@@ -1083,3 +1083,78 @@ Qui est impliqué dans la Data Architecture ?
 
 
 Chapter 4 : Choosing Technologies Across the Data Engineering Lifecycle
+
+Le Data Engineering est un domaine qui regorge de technologies différentes pour résoudre toute sorte de problème. C'est facile de
+perdre de vue l'essentiel : concevoir des sytèmes robustes et fiables pour traiter la donnée et la servir aux utilisateurs finaux
+selon leurs besoins. Pour ce faire, les DE doivent choisir avec soin les technologies et outils qu'ils mettront en place.
+
+Il ne faut pas confondre l'architecture et les technologies ou outils. L'architecture désigne la conception haut-nivaut, qui
+satisfait les besoins métiers. Les technologies et outils sont ce par quoi l'architecture s'incarnera. Il est très déconseillé de
+faire des choix de technologie avant d'avoir une architecture bien conçue.
+
+Plusieurs considérations à prendre en compte pour le choix des techs dans le DEL :
+    - Taille d'équipe et capacités
+    - Vitesse de mise sur le marché (Speed to Market)
+    - Interopérabilité
+    - Optimisation de coût et valeur métier
+    - Aujourd'hui vs. le futur : tech immutable vs. tech transitoire
+    - Localisation (On premise, cloud, cloud hybride, multicloud)
+    - Build vs. Buy
+    - Monolithe vs. Modulaire
+    - Serverlesse vs. Serveurs
+    - Optimization, performances, guerre des benchmarks
+    - Sujets sous-jacents du DEL
+
+
+Taille d'équipe et capacités
+
+    - Jauger la taille de l'équipe et ce qui est attendue d'elle :
+        - Petite équipe (peut-être de une personne) qui doit avoir plusieurs casquettes?
+        - Grande équipe avec des rôles spécialisés?
+        - Est-ce que quelques personnes vont s'occuper de l'intégralité du DEL, ou alors certaines personnes s'occupent
+          uniquement de leur partie respective?
+        - Ces questions ont une incidence sur le type de tech à adopter
+
+    - Il y a un continuum entre techs simples et techs complexes : plus une équipe est petite, moins elle aura de bande passante
+      à dédier à des solutions/techs complexes.
+    - Ne pas essayer de reproduire dans des petites structures des solutions ou pratiques mises en places dans des structures
+      énormes (que l'on peut lire dans des blogs etc)
+    - Pour des équipes avec moins de capacités techniques, privilégier des outils géré par un tiers (managed) et des outils SaaS,
+      qui permettront de dédier la bande passante de l'équipe non pas sur les techs mais sur la résolution des problèmes de
+      l'entreprise
+
+    - Il faut connaître les forces et préférences de l'équipe (low code ou code-first? Quel langage : Java, Python, Go, etc?) et
+      faire des choix de tech qui s'accordent avec ces préférences. Apprendre à utiliser un nouveau langage ou une nouvelle tech
+      demande un investissement de temps non-négligeable
+
+
+Vitesse de mise sur le marché
+
+    - Choisir des techs qui permettront de livrer des features et de la donnée rapidement, tout en maintenant un standard de
+      qualité et de sécurité.
+    - Travailler dans une boucle de feedback rapide (déployer, analyser, apprendre, améliorer)
+    - Le parfait est l'ennemi du bien : il faut prendre des décisions rapidement et ne pas tergiverser infiniment
+    - Faire des choix selon les forces des équipes afin de minimiser leur temps d'apprentissage et d'adaptation
+
+
+Interopérabilité
+
+    - En choisissant une tech, s'assurer qu'elle pourra interagir et se connecter facilement avec les autres techs déjà mises en
+      place.
+    - Évaluer la difficulté d'intégration de chaque nouvelle tech : fluide ou nécessitant beaucoup de temps? Est-ce que les
+      options d'intégration sont incluses dans la tech ou faudra-t-il développer du code custom et de la configuration manuelle?
+    - Souvent, les fournisseurs et les projets open sources ciblent des plateformes et systèmes spécifiques avec lesquels
+      interagir (e.g. un système d'ingestion ou de dataviz a une intégration built-in avec la plupart des Data Warehouse ou Data
+      Lakes populaires). Les outils d'ingestion de données populaires proposent aussi des API pour interagir avec d'autres
+      systèmes.
+    - Parfois, l'interopérabilité est standardisée (e.g. la majorité des DB permettent des connection via JDBC ou ODBC).
+    - À noter que les API REST ne sont pas standardisées : chacune à ses particularités, et c'est le dévelopeur de la tech en
+      question qui devra s'assurer de l'intégration avec d'autres systèmes.
+    - Garder en tête la modularité et la facilité de changer une tech par une autre dans la mesure du possible
+
+
+Optimisation de coût et valeur métier
+
+    - Les coûts représentent une contrainte majeure dans le choix d'architecture, d'outils et technologies.
+    - Le DE doit comprendre les coûts qu'il peut contrôler.
+    - 3 axes : Total Cost of Ownership, Opportunity Cost, et FinOps
