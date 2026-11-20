@@ -1158,3 +1158,86 @@ Optimisation de coût et valeur métier
     - Les coûts représentent une contrainte majeure dans le choix d'architecture, d'outils et technologies.
     - Le DE doit comprendre les coûts qu'il peut contrôler.
     - 3 axes : Total Cost of Ownership, Opportunity Cost, et FinOps
+
+    - Total Cost of Ownership (TCO) :
+        - Coût total estimé d'une initiative. Comprend les coûts directs (salaires, tarifs de services cloud, etc.) et indirects
+          (coûts indépendants devant être réglés quelle que soit leur attribution)
+        - 2 grands types de dépenses : Capital Expenses (Capex) et Operational Expenses (Opex)
+        - Capex :
+            - Grande dépense directe payée en une fois, typiquement gros achats de hardware et de licences de software, pour des
+              coûts allant de la centaine de milliers de dollars aux millions. Ce qui est acheté est traité comme du capital dont
+              la valeur baisse au cours du temps et qui doit avoir un ROI qui rembourse au moins l'investissement de départ
+        - Opex :
+            - D'une certaine façon l'opposé du Capex : dépenses graduelles et étalées dans le temps, concentrées sur du court
+              terme. Modèles pay-as-you-go ou similaire (typiquement pour des services cloud). L'opex se rapproche des coûts
+              directs, et permet une grande flexibilité.
+        - De manière générale, l'Opex permet une plus grande flexibilité dans le choix du hardware et du software (on n'est pas
+          piégé par un grand investissement qu'on doit rembourser).
+        - Conseil de FDE : adopter une approche Opex-first centrée sur le cloud et des technos flexibles.
+
+    - Total Opportunity Cost of Ownership (TOCO)
+        - Coût total associé aux opportunités perdues lors du choix d'une tech, d'une architecture, d'un process, etc.
+        - Exemple : quand on fait le choix d'une data stack A plutôt qu'une stack B, C, ou D, on s'engage sur cette stack
+          (apprentissage, installation, maintenance).
+          Si il s'avère que le choix A n'est pas judicieux ou devient obsolète, quelles sont nos options? Est-ce que les
+          connaissances acquises ton transférables facilement? Est-ce que l'équipement acquis peut être changé facilement?
+          Globalement, à quelle vitesse et à quel coût peut-on changer pour un meilleur/nouveau choix?
+        - Afin d'analyser les TOCO de façon précise, il faut notamment analyser à quel point les techs qu'on s'apprête à choisir
+          sont flexibles ou non.
+
+    - FinOps
+        - Les FinOps sont là pour créer le plus de valeur à partir de services cloud.
+        - Voir Principe 9 d'une bonne Data Architecture ligne 661
+
+
+Aujourd'hui vs. le futur : tech immutable vs. tech transitoire
+
+    - Se concentrer sur le présent : choisir les meilleures tech pour le moment actuel et le futur PROCHE. Se poser les
+      questions : où est-on aujourd'hui (l'organisation)? quelle est notre objectif? Les réponses informeront les choix de tech
+      selon ce qui changera probablement et ce qui est voué à rester.
+    - Tech immutable : ont supporté le passage du temps et sont toujours utilisées et maintenues. Par ex, techs qui supportent
+      le cloud : stockage (S3, Azure Blob), réseau, serveurs, sécurité.
+      En termes de langages : SQL, bash, Python, Scala, C.
+      Effet Lindy : plus grand est le temps depuis lequel une tech a été établie, plus longtemps elle sera utilisée.
+    - Tech transitoire : tech qui vont et viennent (e.g. les innombrables framework frontend JS des années 2010)
+    - Conseils :
+        - Identifier à chaque fois que possibles des techs immutables tout au long du DEL
+        - Construire/ajouter des techs transitoires autour des techs immutables
+        - Réévaluer les outils utiliser tous les deux ans
+        - Tester de nouvelles techs en gardant les pieds sur terre : en sachant que le projet ne sera peut-être pas viable, ou
+          que la tech en question ne sera finalement pas un bon choix
+
+
+Localisation (On premise, cloud, cloud hybride, multicloud)
+
+    - Grand enjeux des organisations. Balance entre le fait de bouger assez vite pour ne pas être laissé derrière par la
+      compétition, et le fait de bien plannifier les migration (notamment vers le cloud, ou vers un autre cloud)
+
+    - On Premise :
+        - Pricipalement présent chez des "vieilles" entreprises bien établies. L'entreprise possède son hardware, en est
+          responsable ainsi que du software qui tourne dessus. Elle doit réparer ou remplacer le hardware défectueux, gérer les
+          cycles de mises à jour, s'assurer d'avoir assez de hardware pour supporter les périodes de pics de traffic (e.g. Black
+          Friday). Il faut donc estimer assez précisément les besoins hardware : acheter assez mais pas trop pour ne pas avoir
+          du hardware inutilisé (argent gâché).
+        - Vient souvent avec des pratiques opérationnelles bien établies et qui fonctionnent bien.
+        - Néanmoins, plus d'inertie que les compétiteurs qui utilisent le cloud.
+        - Besoin de maintenance efficace tout en prévoyant les projets/techs futurs.
+
+    - Cloud :
+        - Location de hardware à la demande à un fournisseur (AWS, Azure, Snowflake, Google Cloud). Facturation à l'usage ou au
+          temps, avec une granularité très précise. Permet de scaler dynamiquement les ressources utilisées au besoin.
+        - Permet aux ingés de lancer des projets très rapidement sans se soucier du hardware
+        - Au début du cloud, les offres étaient Infrastructure as a Service (IaaS) : produits tels que des VMs et des diques
+          virtuels (concrètement une location d'une portion de hardware)
+        - Maintenant, offres de Platform as a Service (PaaS) : infrastructure + une couche de services gérés (managed) par
+          dessus (e.g. DB Relationnelle (Amazon Relational Database Service (RDS), Google Cloud SQL), outils de streaming,
+          cluster Kubernetes).
+          Les offres PaaS permettent aux ingés de s'abstraire des détails d'installation, gestion et maintenance de techs ou
+          logiciels, des détails opérationnels de machines individuelles, de déploiements, etc, et offrent un accès clefs en main
+        - Offres SaaS : un niveau d'abstraction en plus avec des logicles complets clefs en main (suites bureautiques, visio,
+          CRM, ad tech, data management).
+        - Offres serverless : permettent de scale depuis 0 serveurs jusqu'à usage intensif. Dans la pratique, serverless = plein
+          de serveurs invisibles. Facturés à l'usage. Permet aux ingés de s'abstraire de la connaissance opérationnelle des
+          serveurs sur lesquels le code sera déployé.
+        - Attention : une migration vers le cloud nécessite de changer radicalement la façon de penser les projets,
+          spécifiquement au niveau financier.
